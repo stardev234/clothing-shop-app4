@@ -1,0 +1,57 @@
+
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "barcode": {
+        "type": "string",
+        "minLength": 30
+      },
+      "name": {
+        "type": "string",
+        "minLength": 1
+      },
+      "category": {
+        "type": "string",
+        "minLength": 1
+      },
+      "brand": {
+        "type": "string",
+        "minLength": 1
+      },
+      "size": {
+        "type": "string",
+        "minLength": 1
+      },
+      "color": {
+        "type": "string",
+        "minLength": 1
+      },
+      "material": {
+        "type": "string",
+        "minLength": 1
+      },
+      "price": {
+        "type": "string",
+        "pattern": "^[0-9]+(\\.[0-9]{1,2})?$"
+      },
+      "stock": {
+        "type": "string",
+        "pattern": "^[0-9]+$"
+      },
+      "description": {
+        "type": "string"
+      },
+      "date": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "gender": {
+        "type": "string",
+        "enum": ["h", "m"]
+      }
+    },
+    "required": ["barcode","name", "category", "price", "stock"],
+    "additionalProperties": false
+  }
+  
