@@ -1,6 +1,7 @@
 // Define the shape of the request body and the expected response
 
 import { error } from "console";
+import { any } from "prop-types";
 import React from "react";
 import { json } from "stream/consumers";
 
@@ -79,22 +80,35 @@ export type NewProduct = {
     }
   };
   
-
-  export type getProductsResponse = Promise<JSON|null|undefined>
-
-
+  export type Products = {
   
-  export const getProducts = async (): Promise<getProductsResponse> => {
+      barcode: String,
+      name: String,
+      category: String,
+      brand: String,
+      size: String,
+      color: String,
+      material: String,
+      price: String,
+      stock: String,
+      description: String,
+      date: Date,
+      gender: String,
     
-    let ReturnProducts
+  } | any 
+  
+  export const getProducts = async (): Promise<Products|Array<string>> => {
+    
+
     try{
       const response = await fetch('http://localhost:3006/api/getProd');
-     
-      const products: getProductsResponse = response.json()
-      return products
+      
+      const products: Products = await response.json()
+      return  products
     } catch(err){
-      console.error(err);
-     
+       console.error(err);
+      const wrong = ["Something went wrong"]
+       return wrong
     }
-    
+     
   }
