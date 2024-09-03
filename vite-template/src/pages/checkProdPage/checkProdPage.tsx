@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getProducts } from '@/utils/fetchData';
 import { Products } from '@/utils/fetchData';
-import { Card, Image, Text, Badge, Group, Grid, Center} from '@mantine/core';
-
-// Define a type for the product data
+import { Card, Image, Text, Badge, Group, Grid, Center } from '@mantine/core';
 
 
 
@@ -45,54 +43,54 @@ const CheckProdPage: React.FC = () => {
         product.map((product: Products) => (
 
           <Center>
-          
-          
-          <Card  shadow="xl" style={{ borderRadius: "px", padding: "xs",  }}>
-            <Text style={{ backgroundColor: '#0c243b', padding: '0 4px' }}>Codigo de barras:</Text>
-            <Text style={{ fontWeight: 400, fontSize: '110%' }}>{product.barcode}</Text>
-          <Group>
-            <Text style={{ backgroundColor: '#0c243b', padding: '0 4px' }}>Nombre:</Text>
-            <Text style={{ fontWeight: 400, fontSize: '110%', }}>{product.name}</Text>
-            <Text style={{ backgroundColor: '#0c243b', padding: '0 4px' }}>Categoría:</Text>
-            <Text style={{ fontWeight: 400, fontSize: '110%' }}>{product.category}</Text>
-    </Group>
-
-    <Group>
-    <Text style={{ backgroundColor: '#0c243b', padding: '0 4px' }}>Marca:</Text>
-            <Text style={{ fontWeight: 400, fontSize: '110%' }}>{product.brand}</Text>
-         
-            <Text style={{ backgroundColor: '#0c243b', padding: '0 4px' }}>Talle:</Text>
-            <Text style={{ fontWeight: 400, fontSize: '110%' }}>{product.size}</Text>
-
-            <Text style={{ backgroundColor: '#0c243b', padding: '0 4px' }}>Color:</Text>
-            <Text style={{ fontWeight: 400, fontSize: '110%' }}>{product.color}</Text>
-        </Group>
-            
-            <Group>
-            <Text style={{ backgroundColor: '#0c243b', padding: '0 4px' }}>Material:</Text>
-            <Text style={{ fontWeight: 400, fontSize: '110%' }}>{product.material}</Text>
-
-            <Text style={{ backgroundColor: '#0c243b', padding: '0 4px' }}>Stock:</Text>
-            <Text style={{ fontWeight: 400, fontSize: '110%' }}>{product.stock}</Text>
-            </Group>
-            <Text style={{ backgroundColor: '#0c243b', padding: '0 4px' }}>Descripcion:</Text>
-            <Text style={{ fontWeight: 400, fontSize: '110%' }}>descripcion</Text>
-            
-            <Group>
-            <Text style={{ backgroundColor: '#0c243b', padding: '0 4px' }}>Fecha:</Text>
-            <Text style={{ fontWeight: 400, fontSize: '110%' }}>{product.date}</Text>
-            <Text style={{ backgroundColor: '#0c243b', padding: '0 4px' }}>Genero:</Text>
-            <Text style={{ fontWeight: 400, fontSize: '110%' }}>{product.gender}</Text>
-<Text style={{ backgroundColor: '#0c243b', padding: '0 4px' }}>Precio:</Text>
-            <Text style={{ fontWeight: 400, fontSize: '110%' }}>${product.price}</Text>
-</Group>
-        
 
 
+            <Card shadow="xl" style={{ borderRadius: "px", padding: "xs", }}>
+              <Text style={{ backgroundColor: '#0c243b', padding: '0 4px' }}>Codigo de barras:</Text>
+              <Text style={{ fontWeight: 400, fontSize: '110%' }}>{product.barcode}</Text>
+              <Group>
+                <Text style={{ backgroundColor: '#0c243b', padding: '0 4px' }}>Nombre:</Text>
+                <Text style={{ fontWeight: 400, fontSize: '110%', }}>{product.name}</Text>
+                <Text style={{ backgroundColor: '#0c243b', padding: '0 4px' }}>Categoría:</Text>
+                <Text style={{ fontWeight: 400, fontSize: '110%' }}>{product.category}</Text>
+              </Group>
 
-          </Card>
-         
-      </Center>
+              <Group>
+                <Text style={{ backgroundColor: '#0c243b', padding: '0 4px' }}>Marca:</Text>
+                <Text style={{ fontWeight: 400, fontSize: '110%' }}>{product.brand}</Text>
+
+                <Text style={{ backgroundColor: '#0c243b', padding: '0 4px' }}>Talle:</Text>
+                <Text style={{ fontWeight: 400, fontSize: '110%' }}>{product.size}</Text>
+
+                <Text style={{ backgroundColor: '#0c243b', padding: '0 4px' }}>Color:</Text>
+                <Text style={{ fontWeight: 400, fontSize: '110%' }}>{product.color}</Text>
+              </Group>
+
+              <Group>
+                <Text style={{ backgroundColor: '#0c243b', padding: '0 4px' }}>Material:</Text>
+                <Text style={{ fontWeight: 400, fontSize: '110%' }}>{product.material}</Text>
+
+                <Text style={{ backgroundColor: '#0c243b', padding: '0 4px' }}>Stock:</Text>
+                <Text style={{ fontWeight: 400, fontSize: '110%' }}>{product.stock}</Text>
+              </Group>
+              <Text style={{ backgroundColor: '#0c243b', padding: '0 4px' }}>Descripcion:</Text>
+              <Text style={{ fontWeight: 400, fontSize: '110%' }}>descripcion</Text>
+
+              <Group>
+                <Text style={{ backgroundColor: '#0c243b', padding: '0 4px' }}>Fecha:</Text>
+                <Text style={{ fontWeight: 400, fontSize: '110%' }}>{product.date}</Text>
+                <Text style={{ backgroundColor: '#0c243b', padding: '0 4px' }}>Genero:</Text>
+                <Text style={{ fontWeight: 400, fontSize: '110%' }}>{product.gender}</Text>
+                <Text style={{ backgroundColor: '#0c243b', padding: '0 4px' }}>Precio:</Text>
+                <Text style={{ fontWeight: 400, fontSize: '110%' }}>${product.price}</Text>
+              </Group>
+
+
+
+
+            </Card>
+
+          </Center>
         ))}
     </div>
   );
