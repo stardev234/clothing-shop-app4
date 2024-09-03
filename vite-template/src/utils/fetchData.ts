@@ -1,5 +1,7 @@
 // Define the shape of the request body and the expected response
 
+import { error } from "console";
+import React from "react";
 import { json } from "stream/consumers";
 
 export type NewProduct = {
@@ -68,7 +70,7 @@ export type NewProduct = {
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-  
+     
       const data: ProductResponse = await response.json();
       return data;
     } catch (error) {
@@ -78,5 +80,21 @@ export type NewProduct = {
   };
   
 
+  export type getProductsResponse = Promise<JSON|null|undefined>
+
+
   
-  
+  export const getProducts = async (): Promise<getProductsResponse> => {
+    
+    let ReturnProducts
+    try{
+      const response = await fetch('http://localhost:3006/api/getProd');
+     
+      const products: getProductsResponse = response.json()
+      return products
+    } catch(err){
+      console.error(err);
+     
+    }
+    
+  }
