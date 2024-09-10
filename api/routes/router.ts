@@ -1,12 +1,13 @@
 import * as express from "express";
 import  Router  from "express";
 import  {validateData}  from "../middleware/dataValidation";
-import  {postProduct}  from "../controllers/controllers";
-import { getAllProducts } from "../controllers/controllers";
-import { getBarcode } from "../controllers/controllers";
+import { postProduct } from "../controllers/postProdController";
+import { getAllProducts } from "../controllers/getAllProdsController";
+import { getBarcode } from "../controllers/getBarcodeController";
+import { getFilteredProds } from "../controllers/getFilteredProds";
 
 const router: express.Router = express.Router();
-
+router.post("/getFilteredProds", getFilteredProds)
 router.get("/getProd", getAllProducts);
 router.post("/addProd", validateData, postProduct);
 router.get("/getBarcode", getBarcode);
