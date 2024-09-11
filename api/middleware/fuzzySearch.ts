@@ -3,9 +3,18 @@ import Fuse from 'fuse.js';
 import Product from '../db/dbModels';
 
 interface SearchResult {
-  id: string;
-  name: string;
-
+  barcode: string,
+  name: string,
+  category: string,
+  brand: string,
+  size: string,
+  color: string,
+  material: string,
+  price: number,
+  stock: number,
+  description: string,
+  date: Date,
+  gender: string
 }
 
 interface FilterOptions {
@@ -23,27 +32,16 @@ interface FilterOptions {
   gender: string
 }
 
-async function fuzzySearch(name: string, brand: string, size: string, color: string, date: string, gender: string): Promise<SearchResult[]> {
+async function fuzzySearch(name: string): Promise<SearchResult[]> {
 
   const documents = await Product.find().exec();
 
 
     
-    
-
-    const nameQuery = name  ? `${name}` : '';
-    const brandQuery = brand ? `${brand}` : '';
-    const sizeQuery = size ? `${size}` : '';
-    const colorQuery = size ? `${color}` : '';
-    const dateQuery = date ? `${date}` : '';
-    const genderQuery = gender ? `${gender}` : '';
-
-    const queries = [nameQuery, brandQuery, sizeQuery, colorQuery, dateQuery, genderQuery].filter(Boolean).join(' ');
   
   
-  const query = queries
 
-  console.log("queries  ads", queries);
+
   
   // Configure Fuse.js options
   /* const options: Fuse.IFuseOptions<IModel> = {
@@ -65,7 +63,7 @@ async function fuzzySearch(name: string, brand: string, size: string, color: str
 
   console.log(name);
   
-  const results: result = fuse.search(query);
+  const results: result = fuse.search(name);
 
 
   return results.map((result: { item: {

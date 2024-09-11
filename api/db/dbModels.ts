@@ -14,6 +14,7 @@ const productSchema = new Schema({
   description: String,
   date: Date,
   gender: String,
+  provider: String,
 }, { timestamps: true });
 
 const Product = mongoose.model('Product', productSchema);

@@ -10,6 +10,7 @@ export type newFilter = {
     price: String,
     stock: String,
     gender: String,
+
   };
   
   export type ProductResponse = {

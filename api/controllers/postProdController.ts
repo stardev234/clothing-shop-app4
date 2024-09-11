@@ -6,7 +6,7 @@ import * as express from 'express';
 
 export async function postProduct(req: express.Request, res: express.Response): Promise<void> {
   console.log("FROM POST CONTROLLER");
-  const { barcode, name, category, brand, size, color, material, price, stock, description, date, gender } = req.body;
+  const { barcode, name, category, brand, size, color, material, price, stock, description, date, gender, provider } = req.body;
   try {
     const product = new Product({
       barcode,
@@ -20,7 +20,8 @@ export async function postProduct(req: express.Request, res: express.Response): 
       stock,
       description,
       date,
-      gender
+      gender,
+      provider,
     });
     const result = await product.save();
     console.log(product);
