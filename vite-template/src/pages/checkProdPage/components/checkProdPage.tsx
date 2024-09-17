@@ -1,20 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { getProducts } from '../utils/fetchProds';
 import { Product } from '@/models/Products';
-import { Card, Image, Text, Badge, Group, Grid, Center } from '@mantine/core';
+import { Card, Image, Text, Badge, Group, Grid, Center, Button, Modal } from '@mantine/core';
 import { FilteringBar } from "./FilteringBar"
-
+import { IconEdit, icons } from '@tabler/icons-react';
+import { useDisclosure } from '@mantine/hooks';
 const CheckProdPage: React.FC = () => {
   // State for storing product data, loading state, and error
   const [product, setProduct] = useState<Product | Array<string> | string | Object>(["defaultProducts"]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
+  const icon = <IconEdit size={22} />;
+  const [opened, { open, close }] = useDisclosure(false);
+  const [id, setId] = useState<string>("")
+  
   const updateProducts = (newData: Product | Array<string> | string | Object) => {
     console.log(typeof newData);
 
     setProduct(newData)
   }
+
+  const editProducts = (id: string) => {
+   
+    
+    setId(id)
+    console.log(id);
+    
+    open()
+  }
+
 
   // useEffect to fetch product data
   useEffect(() => {
@@ -37,19 +51,32 @@ const CheckProdPage: React.FC = () => {
   if (error) return <p>Error: {error}</p>;
 
   return (
+
     <div>
 
+      <FilteringBar onAction={updateProducts}></FilteringBar>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: "center" }}>
 
-        <FilteringBar onAction={updateProducts}></FilteringBar>
+        <Modal opened={opened} onClose={close} title="Authentication">
+          {/* Modal content */}
+          <div>{id}</div>
+        </Modal>
 
         {
 
-          product.map((product: Product) => (
+          product.map((product: Product,) => (
 
-            <Card shadow="xl" style={{ borderRadius: "px", padding: "xs", width: "500px" }}>
+            <Card key={product._id} shadow="xl" style={{ borderRadius: "px", padding: "xs", width: "500px" }}>
+
+
+
+              <Button onClick={()=>editProducts(product._id)} style={{ width: "50px", padding: "0px", margin: "0px", bottom: "15px", left: "430px" }}>{icon}</Button>
               <Text style={{ backgroundColor: '#0c243b', padding: '0 4px' }}>Codigo de barras:</Text>
+
               <Text style={{ fontWeight: 400, fontSize: '110%' }}>{product.barcode}</Text>
+
+
+
               <Group>
                 <Text style={{ backgroundColor: '#0c243b', padding: '0 4px' }}>Nombre:</Text>
                 <Text style={{ fontWeight: 400, fontSize: '110%', }}>{product.name}</Text>

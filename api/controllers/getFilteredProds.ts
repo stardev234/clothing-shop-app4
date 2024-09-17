@@ -1,93 +1,98 @@
 import * as express from 'express';
-import { Router } from 'express';
-import mongoose, { Schema } from 'mongoose';
 import Product from '../db/dbModels';
-import { cleanData } from '../utils/cleanData';
 import fuzzySearch from '../middleware/fuzzySearch';
-export interface FilterOptions {
-    barcode: string,
-    name: string,
-    category: string,
-    brand: string,
-    size: string,
-    color: string,
-    material: string,
-    price: number,
-    stock: number,
-    description: string,
-    date: Date,
-    gender: string
-}
-
 
 export async function getFilteredProds(req: express.Request, res: express.Response): Promise<void> {
 
     console.log("body: ", req.body);
 
-    const body: FilterOptions = req.body;
+    let fromDate = req.body.date
+    if (req.body.fromDate) {
+        fromDate = new Date(req.body.fromDate)
+    } else { fromDate = null }
+    let untilDate = req.body.date
+    if (req.body.untilDate) {
+        untilDate = new Date(req.body.untilDate)
+    } else { untilDate = null }
+
+
+    let fromDateTime = new Date(fromDate).getTime()
+    let untilDateTime = new Date(untilDate).getTime()
+
+    function removeTime(date: any) {
+        // Create a new date object with the same year, month, and day
+        return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+    }
 
     try {
 
-        const cleanedBody = cleanData(body)
+        let newBody: any
+        newBody = await Product.find()
 
-        let newBody = req.body
+        if (req.body.name) {
 
-        let filteredArray: any[] = []
-        let fuzzy = await fuzzySearch(req.body.name)
-
-        if (fuzzy) {
-            newBody = fuzzy
-
-            console.log("from if");
-
+            newBody = await fuzzySearch(req.body.name)
         }
-
-        console.log("newbody", newBody[1]);
 
 
         if (req.body.category) {
 
-
             let newArr = newBody.filter((value: any) => {
-
-                console.log(value);
-
                 return value = value.category === req.body.category
 
-
             })
             newBody = newArr
-            console.log("from if category", newBody[1]);
         }
 
+        if (req.body.gender) {
 
-        if (req.body.date) {
             let newArr = newBody.filter((value: any) => {
-                if (newBody.date) {
+                return value = value.gender === req.body.gender
 
-                }
-                return value
+            })
+            newBody = newArr
+        }
+
+        if (fromDate && !untilDate) {
+
+            let newArr = newBody.filter((value: any) => {
+
+                value = removeTime(value.date)
+                value = new Date(value).getTime()
+
+                return value >= fromDateTime
             })
             newBody = newArr
 
-
         }
 
+        if (!fromDate && untilDate) {
 
+            let newArr = newBody.filter((value: any) => {
 
+                value = removeTime(value.date)
+                value = new Date(value).getTime()
+                return value <= untilDateTime
 
+            })
+            newBody = newArr
+        }
 
+        if (fromDate && untilDate) {
 
-        console.log("fuzzy", typeof fuzzy);
+            let newArr = newBody.filter((value: any) => {
 
-        const fiteredProd = await Product.find(cleanedBody)
-
+                value = removeTime(value.date)
+                value = new Date(value).getTime()
+                if ((fromDateTime <= value) && (untilDateTime >= value)) {
+                    return value
+                }
+            })
+            newBody = newArr
+        }
 
         res.send(newBody)
     } catch (error) {
         console.log(error);
-
     }
-
-
 } 

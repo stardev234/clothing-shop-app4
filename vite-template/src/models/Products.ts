@@ -12,5 +12,5 @@ export type Product = {
     description: String,
     date: Date,
     gender: String,
-  
+
 }  | any

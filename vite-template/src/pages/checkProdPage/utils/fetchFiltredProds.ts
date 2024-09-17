@@ -10,6 +10,8 @@ export type newFilter = {
     price: String,
     stock: String,
     gender: String,
+    fromDate: Date,
+    untilDate: Date
 
   };
   
@@ -22,8 +24,8 @@ export type newFilter = {
     material: String,
     price: String,
     stock: String,
+    gender: String,   
     date: Date,
-    gender: String,
   };
   
 

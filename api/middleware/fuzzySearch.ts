@@ -2,7 +2,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 import Fuse from 'fuse.js';
 import Product from '../db/dbModels';
 
-interface SearchResult {
+export interface SearchResult {
   barcode: string,
   name: string,
   category: string,
@@ -65,6 +65,8 @@ async function fuzzySearch(name: string): Promise<SearchResult[]> {
   
   const results: result = fuse.search(name);
 
+
+  
 
   return results.map((result: { item: {
     category: any;

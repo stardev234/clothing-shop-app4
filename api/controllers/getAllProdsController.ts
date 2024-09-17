@@ -6,6 +6,8 @@ import * as express from 'express';
 export async function getAllProducts(req: express.Request, res: express.Response): Promise<void> {
   try {
     const result = await Product.find();
+    console.log(result);
+    
     res.send(result);
   } catch (err) {
     console.log(err);

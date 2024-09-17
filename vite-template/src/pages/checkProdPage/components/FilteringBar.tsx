@@ -1,7 +1,5 @@
-import { Box, Button, Drawer, InputLabel, Menu, Select, Textarea, TextInput } from "@mantine/core";
-import { DatePicker, DatePickerInput } from '@mantine/dates';
+import { Box, Button, Card, Drawer, InputLabel, Menu, Select, Textarea, TextInput } from "@mantine/core";
 import { useDisclosure } from '@mantine/hooks';
-import { getProducts } from "../utils/fetchProds";
 import { Product } from "@/models/Products";
 import { SetStateAction, useEffect, useState } from "react";
 import { useForm } from "@mantine/form";
@@ -21,12 +19,7 @@ export const FilteringBar: React.FC<MyComponentProps> = ({ onAction }) => {
     const [error, setError] = useState<string | null>(null);
     const [date, setDate] = useState('');
 
-    const handleChange = (event: { target: { value: SetStateAction<string>; }; }) => {
-      setDate(event.target.value);
-    };
-
     const [opened, { open, close }] = useDisclosure(false);
-
 
     const form = useForm({
         initialValues: {
@@ -39,6 +32,8 @@ export const FilteringBar: React.FC<MyComponentProps> = ({ onAction }) => {
             price: "",
             stock: "",
             gender: "",
+            fromDate: new Date(""),
+            untilDate: new Date(""),
         },
         validate: {
 
@@ -63,20 +58,15 @@ export const FilteringBar: React.FC<MyComponentProps> = ({ onAction }) => {
                     price: values.price,
                     stock: values.stock,
                     gender: values.gender,
-
+                    fromDate: values.fromDate,
+                    untilDate: values.untilDate,
                 }
 
                 console.log(values);
-
                 const productData = await FilterProducts(filter);
 
-
-
                 setProduct(productData)
-
-
                 onAction(productData)
-
 
             } catch (err) {
                 setError(err instanceof Error ? err.message : 'Unknown error');
@@ -92,19 +82,17 @@ export const FilteringBar: React.FC<MyComponentProps> = ({ onAction }) => {
         if (error) return <p>Error: {error}</p>
     };
 
-
-
     return (
         <>
             <Drawer opened={opened} onClose={close} title="Busqueda y filtrado de Productos">
-                {/* Drawer content */}
+             
 
                 <form
                     onSubmit={form.onSubmit(handleSubmit)}
                 >
                     <TextInput
-                        label="Name"
-                        placeholder="Your name"
+                        label="Nombre"
+                        placeholder="Nombre de la prenda"
                         {...form.getInputProps('name')}
                     />
 
@@ -115,37 +103,35 @@ export const FilteringBar: React.FC<MyComponentProps> = ({ onAction }) => {
                         {...form.getInputProps('category')}
                     />
 
-                    <TextInput
-                        label="Fecha"
-                        value={date}
-                        type="date"  // HTML date input type
-                        style={{ marginBottom: 20 }} // Optional styling
-                        {...form.getInputProps('date')}
+                    <Select
+                        label="Genero"
+                        placeholder="Elija un Genero"
+                        data={["Hombre", "Mujer", "Unisex"]}
+                        {...form.getInputProps('gender')}
                     />
 
+                    <Card style={{ marginTop: 20 }} >
+                        <div>Filtrar por periodo</div>
+                        <TextInput
+                            label="Desde"
+                            value={date}
+                            type="date"  // HTML date input type
+                            style={{ marginBottom: 20 }} // Optional styling
+                            {...form.getInputProps('fromDate')}
+                        />
 
-
-
-
-                    <Textarea
-                        label="Marca"
-                        placeholder="Marca"
-                        {...form.getInputProps('brand')}
-                    />
-
-                    <Textarea
-                        label="Talle"
-                        placeholder="Talle"
-                        {...form.getInputProps('size')}
-                    />
-
-
+                        <TextInput
+                            label="Hasta"
+                            value={date}
+                            type="date"  // HTML date input type
+                            style={{ marginBottom: 20 }} // Optional styling
+                            {...form.getInputProps('untilDate')}
+                        />
+                    </Card>
 
                     <Button onClick={close} type="submit" >Submit</Button>
 
                 </form>
-
-
 
             </Drawer>
 

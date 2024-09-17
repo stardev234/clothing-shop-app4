@@ -16,6 +16,7 @@ declare module 'fuse.js' {
     }
   
     export default class Fuse<T> {
+      static IFuseOptions: any;
       constructor(list: T[], options: IFuseOptions<T>);
       search(query: string): IFuseResult<T>[];
     }
