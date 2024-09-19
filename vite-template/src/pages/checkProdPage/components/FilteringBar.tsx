@@ -9,10 +9,11 @@ type MyFunction = (FiltredProds: Product) => void;
 
 interface MyComponentProps {
     onAction: MyFunction;
+
 }
 
 
-export const FilteringBar: React.FC<MyComponentProps> = ({ onAction }) => {
+export const FilteringBar: React.FC<MyComponentProps> = ({ onAction}) => {
 
     const [product, setProduct] = useState<Product | Array<string> | string | Object>(["defaultProducts"]);
     const [loading, setLoading] = useState<boolean>(true);
@@ -67,6 +68,7 @@ export const FilteringBar: React.FC<MyComponentProps> = ({ onAction }) => {
 
                 setProduct(productData)
                 onAction(productData)
+                
 
             } catch (err) {
                 setError(err instanceof Error ? err.message : 'Unknown error');
@@ -125,6 +127,7 @@ export const FilteringBar: React.FC<MyComponentProps> = ({ onAction }) => {
                             value={date}
                             type="date"  // HTML date input type
                             style={{ marginBottom: 20 }} // Optional styling
+                            
                             {...form.getInputProps('untilDate')}
                         />
                     </Card>

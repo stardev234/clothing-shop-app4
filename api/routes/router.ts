@@ -11,7 +11,7 @@ router.post("/getFilteredProds", getFilteredProds)
 router.get("/getProd", getAllProducts);
 router.post("/addProd", validateData, postProduct);
 router.get("/getBarcode", getBarcode);
-
+router.put("editProd")
 // router.delete("/delete"); // uncomment this line if you want to add delete route
 
 export default router;
