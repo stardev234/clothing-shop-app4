@@ -217,8 +217,9 @@ export const EditProd: React.FC<any> = ({ productElement, onUpdate }) => {
 
 
 
-        <Button onClick={close} type="submit" style={{ marginTop: "10px" }}>Submit</Button>
+        <Button onClick={close} type="submit" style={{ marginTop: "10px" }}>Enviar</Button>
 
+        <Button style={{ marginTop: "10px", marginLeft:"155px", backgroundColor:"red" }}>Eliminar Producto</Button>
 
 
       </form>
