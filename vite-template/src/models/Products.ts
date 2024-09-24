@@ -1,5 +1,5 @@
 export type Product = {
-  
+    _id: string,
     barcode: String,
     name: String,
     category: String,

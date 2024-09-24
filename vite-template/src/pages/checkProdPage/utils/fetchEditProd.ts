@@ -1,3 +1,4 @@
+import { productElement } from "../components/EditProd";
 
 export type newFilter = {
 
@@ -10,6 +11,7 @@ export type newFilter = {
     price: String,
     stock: String,
     gender: String,
+    description: string,
     fromDate: Date,
     untilDate: Date
 
@@ -30,11 +32,14 @@ export type newFilter = {
   
 
 
-  export const updateProduct = async (product: newFilter): Promise<ProductResponse> => {
-
+  export const updateProduct = async (product: productElement): Promise<ProductResponse> => {
+    console.log("from FetchUpdateProd");
+      
     
     try {
-      const response = await fetch('http://localhost:3006/api/getFilteredProds', {
+      console.log("from FetchUpdateProd");
+      
+      const response = await fetch('http://localhost:3006/api/editProd', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -47,6 +52,8 @@ export type newFilter = {
       }
      
       const data: ProductResponse = await response.json();
+      console.log("from fetchEdit", data);
+      
       return data;
     } catch (error) {
       console.error('Failed to create user:', error);

@@ -1,13 +1,16 @@
-import { Box, Button, Card, Drawer, Grid, Group, InputLabel, Menu, Select, Textarea, TextInput, Checkbox, Input } from "@mantine/core";
+import { Box, Button, Card, Drawer, Grid, Group, InputLabel, Menu, Select, Textarea, TextInput, Checkbox, Input, Modal } from "@mantine/core";
 import { useDisclosure } from '@mantine/hooks';
 import { Product } from "@/models/Products";
 import { SetStateAction, useEffect, useState } from "react";
 import { useForm } from "@mantine/form";
 import { FilterProducts } from "../utils/fetchFiltredProds";
 import { newFilter } from "../utils/fetchFiltredProds";
+import { updateProduct } from "../utils/fetchEditProd";
 
-interface myProductElement {
-  id: string,
+
+
+export interface myProductElement {
+  _id: string,
   provider: string,
   name: string,
   category: string,
@@ -22,17 +25,19 @@ interface myProductElement {
   date: Date,
 }
 
-interface productElement {
+export interface productElement {
   productElement: myProductElement
+  onUpdate: () => void; // Add this line
 }
 
 
+
 type id = { id: String }
-export const EditProd: React.FC<any> = ({ productElement }) => {
+export const EditProd: React.FC<any> = ({ productElement, onUpdate }) => {
 
 
   const [product, setProduct] = useState<Product | Array<string> | string | Object>(["defaultProducts"]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [date, setDate] = useState('');
   const [isEnabled, setIsEnabled] = useState(true);
@@ -43,6 +48,7 @@ export const EditProd: React.FC<any> = ({ productElement }) => {
 
   const form = useForm({
     initialValues: {
+      _id: productElement._id,
       provider: "",
       name: productElement.name,
       category: productElement.category,
@@ -51,10 +57,11 @@ export const EditProd: React.FC<any> = ({ productElement }) => {
       color: productElement.color,
       material: productElement.material,
       price: productElement.price,
-      description: productElement.descripcion,
+      description: productElement.description,
       stock: productElement.stock,
       gender: productElement.gender,
-      date: new Date(""),
+
+
 
     },
     validate: {
@@ -64,12 +71,14 @@ export const EditProd: React.FC<any> = ({ productElement }) => {
 
 
   const handleSubmit = async (values: typeof form.values) => {
-    console.log("from handleSubmit");
+    setLoading(true);
+    setError(null); // Reset error state on new submission
+
 
     const fetchData = async () => {
       try {
 
-        const filter: Product = {
+        const updatedProduct: Product = {
 
           name: values.name,
           category: values.category,
@@ -79,14 +88,19 @@ export const EditProd: React.FC<any> = ({ productElement }) => {
           material: values.material,
           price: values.price,
           stock: values.stock,
+          description: values.description,
           gender: values.gender,
-          date: values.date,
+          _id: values._id
+
         }
 
-        console.log(values);
-        const productData = await FilterProducts(filter);
+        console.log("from handleSubmit", updatedProduct);
 
-        setProduct(productData)
+        const updateData = await updateProduct(updatedProduct);
+
+        onUpdate(updateData)
+
+
 
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Unknown error');
@@ -108,7 +122,12 @@ export const EditProd: React.FC<any> = ({ productElement }) => {
       <form
         onSubmit={form.onSubmit(handleSubmit)}
       >
-
+        {loading && <p>Loading...</p>} {/* Show loading message */}
+        {error && (
+          <Box style={{ color: 'red', marginBottom: '10px' }}>
+            Error: {error} {/* Display error message */}
+          </Box>
+        )}
         <Group>
 
           <TextInput
@@ -185,7 +204,7 @@ export const EditProd: React.FC<any> = ({ productElement }) => {
           <TextInput
             label="Descripcion"
             placeholder="Descripcion"
-            {...form.getInputProps('Description')}
+            {...form.getInputProps('description')}
           />
 
         </Group>

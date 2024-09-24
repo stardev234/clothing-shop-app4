@@ -10,18 +10,22 @@ import { Pagination } from '@mantine/core';
 
 const CheckProdPage: React.FC = () => {
   // State for storing product data, loading state, and error
+
   const [product, setProduct] = useState<Product[] | string | Object>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [opened, { open, close }] = useDisclosure(false);
+
+  const [modalContent, setModalContent] = useState("editMode")
   const [prod, setEditingProd] = useState<Product>({});
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [productsPerPage] = useState<number>(6);
   const icon = <IconEdit size={22} />;
   const totalProducts = (product as Product[]).length;
   const totalPages = Math.ceil(totalProducts / productsPerPage);
-
-
+  const [updateTrigger, setUpdateTrigger] = useState<boolean>(false);
+  const [updatedProduct, setUpdatedProduct] = useState<Product | null>(null); // State for the updated product
+  const [modalOpen, setModalOpen] = useState<boolean>(false); // State for modal visibility
 
   const currentProducts = (product as Product[]).slice(
     (currentPage - 1) * productsPerPage,
@@ -36,7 +40,7 @@ const CheckProdPage: React.FC = () => {
   const editProducts = (editingProduct: Product) => {
     console.log(editingProduct);
     setEditingProd(editingProduct);
-    
+ 
     open();
   };
 
@@ -67,6 +71,61 @@ const CheckProdPage: React.FC = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (updateTrigger) {
+    
+    const fetchData = async () => {
+      try {
+        const productData = await getProducts();
+        setProduct(productData);
+        setUpdateTrigger(false)
+
+        console.log("from useEffect update trigger");
+        
+        
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Unknown error');
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchData()
+  };
+  }, [updateTrigger]);
+
+  const handleUpdate = (product: Product) => {
+    console.log("from handle update");
+    setUpdatedProduct(product); // Store the updated product
+    
+    console.log("from handleUpdate: ", updatedProduct);
+    
+    setModalOpen(true); // Open the modal
+    setUpdateTrigger(true); // Set the trigger to true
+    
+
+  };
+
+
+  useEffect(() => {
+    if (updatedProduct) {
+    const fetchData = async () => {
+      try {
+        console.log("from updated product useEffect: ",updatedProduct);
+        setModalContent("")
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Unknown error');
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchData()
+  };
+  }, [updatedProduct]);
+
+
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
@@ -76,9 +135,27 @@ const CheckProdPage: React.FC = () => {
     <div>
       <FilteringBar onAction={updateProducts} />
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: "center" }}>
+        
         <Modal opened={opened} onClose={close} title="Editar Producto" size={"md"} >
-          <EditProd productElement={prod}  />
+        {modalContent === 'editMode' ? (
+          <EditProd productElement={prod} onUpdate={handleUpdate}   />
+        ) : (
+          <div>
+            {updatedProduct.name}
+            {updatedProduct.brand}
+            {updatedProduct.category}
+            {updatedProduct.color}
+            {updatedProduct.name}
+            {updatedProduct.name}
+            {updatedProduct.name}
+          </div>
+        )}
+          
+          
         </Modal>
+
+
+
 
         {currentProducts.map((product: Product) => (
           <Card key={product._id} shadow="xl" style={{ borderRadius: "px", padding: "xs", width: "500px" }}>
@@ -111,7 +188,7 @@ const CheckProdPage: React.FC = () => {
               <Text style={{ fontWeight: 400, fontSize: '110%' }}>{product.stock}</Text>
             </Group>
             <Text style={{ backgroundColor: '#0c243b', padding: '0 4px' }}>Descripcion:</Text>
-            <Text style={{ fontWeight: 400, fontSize: '110%' }}>descripcion</Text>
+            <Text style={{ fontWeight: 400, fontSize: '110%' }}>{product.description}</Text>
 
             <Group>
               <Text style={{ backgroundColor: '#0c243b', padding: '0 4px' }}>Fecha:</Text>
