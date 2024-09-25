@@ -32,6 +32,7 @@ export async function getFilteredProds(req: express.Request, res: express.Respon
         if (req.body.name) {
 
             newBody = await fuzzySearch(req.body.name)
+            console.log("FUZZY SEARCH DATA:  ", newBody[1]);
         }
 
 

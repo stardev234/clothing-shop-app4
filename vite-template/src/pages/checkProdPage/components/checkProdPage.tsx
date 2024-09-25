@@ -8,13 +8,14 @@ import { useDisclosure } from '@mantine/hooks';
 import { EditProd } from './EditProd';
 import { Pagination } from '@mantine/core';
 import { UpdatedProduct } from './UpdatedProduct';
+import { DeleteProduct } from './DeleteProd';
 const CheckProdPage: React.FC = () => {
   // State for storing product data, loading state, and error
   const [product, setProduct] = useState<Product[] | string | Object>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [opened, { open, close }] = useDisclosure(false);
-  const [modalContent, setModalContent] = useState("editMode")
+
   const [prod, setEditingProd] = useState<Product>({});
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [productsPerPage] = useState<number>(20);
@@ -25,7 +26,7 @@ const CheckProdPage: React.FC = () => {
   const [updatedProduct, setUpdatedProduct] = useState<Product | null>(null); // State for the updated product
   const [modalOpen, setModalOpen] = useState<boolean>(false); // State for modal visibility
   const [modalTitle, setModalTitle] = useState<string>("Editar producto")
-
+  const [modalContent, setModalContent] = useState("editMode")
   const currentProducts = (product as Product[]).slice(
     (currentPage - 1) * productsPerPage,
     currentPage * productsPerPage
@@ -41,6 +42,15 @@ const CheckProdPage: React.FC = () => {
     setEditingProd(editingProduct);
     open();
   };
+
+
+
+  const deleteProduct = () => {
+    setModalContent("deleteMode")
+    setModalTitle("¿Eliminar el siguiente producto?")
+  };
+
+
 
   const handleUpdate = (product: Product) => {
     console.log("from handle update");
@@ -95,7 +105,7 @@ const CheckProdPage: React.FC = () => {
       const fetchData = async () => {
         try {
           console.log("from updated product useEffect: ", updatedProduct);
-          setModalContent("")
+          setModalContent("updatedProduct")
           setModalTitle("Producto editado")
         } catch (err) {
           setError(err instanceof Error ? err.message : 'Unknown error');
@@ -122,13 +132,17 @@ const CheckProdPage: React.FC = () => {
 
         <Modal opened={opened} onClose={() => { close() }} 
         title={modalTitle} size={"md"} >
-          {modalContent === 'editMode' ? (
-            <EditProd productElement={prod} onUpdate={handleUpdate} />
-          ) : (
-            <>
-            <UpdatedProduct updatedElement={updatedProduct}  />
-            </>
-          )}
+          
+          <div>
+          {modalContent === 'editMode' && <EditProd productElement={prod} onUpdate={handleUpdate} onDelete={deleteProduct}/>}
+          {modalContent === 'updatedProduct' && <UpdatedProduct updatedElement={updatedProduct}  />}
+          {modalContent === 'deleteMode' && <DeleteProduct productElement={prod} onUpdate={handleUpdate}></DeleteProduct>}
+          
+
+          
+        </div>
+          
+          
 
         </Modal>
 

@@ -69,17 +69,19 @@ async function fuzzySearch(name: string): Promise<SearchResult[]> {
   
 
   return results.map((result: { item: {
-    category: any;
-    brand: any;
-    size: any;
-    color: any;
-    material: any;
+    category: string;
+    brand: string;
+    size: string;
+    color: string;
+    material: string;
     stock: any;
     description: any;
     date: any;
     gender: any;
     price: any;
-    barcode: any; _id: { toString: () => any; }; name: any; 
+    barcode: any; 
+    _id: any; 
+    name: any; 
 }; }) => ({
     barcode: result.item.barcode.toString(),
     name: result.item.name,
@@ -93,7 +95,7 @@ async function fuzzySearch(name: string): Promise<SearchResult[]> {
     date: result.item.date,
     gender: result.item.gender,
     price: result.item.price,
-
+    _id: result.item._id
 
   }));
 }

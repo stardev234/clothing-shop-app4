@@ -28,12 +28,13 @@ export interface myProductElement {
 export interface productElement {
   productElement: myProductElement
   onUpdate: () => void; // Add this line
+  onDelete: () => void; // Add this line
 }
 
 
 
 type id = { id: String }
-export const EditProd: React.FC<any> = ({ productElement, onUpdate }) => {
+export const EditProd: React.FC<any> = ({ productElement, onUpdate, onDelete }) => {
 
 
   const [product, setProduct] = useState<Product | Array<string> | string | Object>(["defaultProducts"]);
@@ -219,7 +220,7 @@ export const EditProd: React.FC<any> = ({ productElement, onUpdate }) => {
 
         <Button onClick={close} type="submit" style={{ marginTop: "10px" }}>Enviar</Button>
 
-        <Button style={{ marginTop: "10px", marginLeft:"155px", backgroundColor:"red" }}>Eliminar Producto</Button>
+        <Button onClick={onDelete} style={{ marginTop: "10px", marginLeft:"155px", backgroundColor:"red" }}>Eliminar Producto</Button>
 
 
       </form>

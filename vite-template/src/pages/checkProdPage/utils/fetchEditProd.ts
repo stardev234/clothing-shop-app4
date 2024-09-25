@@ -34,7 +34,8 @@ export type newFilter = {
 
   export const updateProduct = async (product: productElement): Promise<ProductResponse> => {
     console.log("from FetchUpdateProd");
-      
+    console.log("FROM UPDATE PRODUCT: ", product);
+    
     
     try {
       console.log("from FetchUpdateProd");
