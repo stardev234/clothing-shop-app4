@@ -1,3 +1,4 @@
+import { Product } from "@/models/Products";
 import { productElement } from "../components/EditProd";
 
 export type newFilter = {
@@ -32,7 +33,7 @@ export type newFilter = {
   
 
 
-  export const updateProduct = async (product: productElement): Promise<ProductResponse> => {
+  export const updateProduct = async (product: Product): Promise<ProductResponse> => {
     console.log("from FetchUpdateProd");
     console.log("FROM UPDATE PRODUCT: ", product);
     

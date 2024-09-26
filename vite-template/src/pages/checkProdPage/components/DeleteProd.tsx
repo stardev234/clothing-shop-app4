@@ -6,35 +6,20 @@ import { useForm } from "@mantine/form";
 import { FilterProducts } from "../utils/fetchFiltredProds";
 import { newFilter } from "../utils/fetchFiltredProds";
 import { updateProduct } from "../utils/fetchEditProd";
-import { deleteProduct } from "../utils/fetchDeleteProd";
+import { deleteProdFetch } from "../utils/fetchDeleteProd";
 
-
-export interface myProductElement {
-  _id: string,
-  provider: string,
-  name: string,
-  category: string,
-  brand: string,
-  size: string,
-  color: string,
-  material: string,
-  price: string,
-  description: string,
-  stock: Number,
-  gender: string,
-  date: Date,
-}
 
 export interface productElement {
-  productElement: myProductElement
+  productElement: Product
   onUpdate: () => void; // Add this line
+  onDelete: () => void; // Add this line
 }
-
 
 
 type id = { id: String }
-export const DeleteProduct: React.FC<any> = ({ productElement, onUpdate }) => {
+export const DeleteProduct: React.FC<any> = ({productElement}) => {
 
+  
 
   const [product, setProduct] = useState<Product | Array<string> | string | Object>(["defaultProducts"]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -44,63 +29,46 @@ export const DeleteProduct: React.FC<any> = ({ productElement, onUpdate }) => {
   const [opened, { open, close }] = useDisclosure(false);
   const [isAnyFieldEnabled, setIsAnyFieldEnabled] = useState(false);
 
-  console.log("From edit prod", productElement);
+  console.log(productElement);
 
-  const form = useForm({
-    initialValues: {
-      _id: productElement._id,
-      provider: "",
-      name: productElement.name,
-      category: productElement.category,
-      brand: productElement.brand,
-      size: productElement.size,
-      color: productElement.color,
-      material: productElement.material,
-      price: productElement.price,
-      description: productElement.description,
-      stock: productElement.stock,
-      gender: productElement.gender,
-
-
-
-    },
-    validate: {
-
-    },
-  });
-
-
-  const handleSubmit = async (values: typeof form.values) => {
+console.log("FROM DELETE HANDLESUBMIT PRODUCT productElement", productElement);
+  const handleSubmit = async () => {
     setLoading(true);
     setError(null); // Reset error state on new submission
 
+    
+    
+  
+    
 
     const fetchData = async () => {
       try {
 
+        console.log("FROM DELETE HANDLESUBMIT PRODUCT productElement FETCH DATA", productElement)
+
         const deletedProduct: Product = {
 
-          name: values.name,
-          category: values.category,
-          brand: values.brand,
-          size: values.size,
-          color: values.color,
-          material: values.material,
-          price: values.price,
-          stock: values.stock,
-          description: values.description,
-          gender: values.gender,
-          _id: values._id
+            name: productElement.name,
+            category: productElement.category,
+            brand: productElement.brand,
+            size: productElement.size,
+            color: productElement.color,
+            material: productElement.material,
+            price: productElement.price,
+            stock: productElement.stock,
+            description: productElement.description,
+            gender: productElement.gender,
+            _id: productElement._id
+  
+          }
 
-        }
+        console.log("from DELETE PRODUCT", deletedProduct);
+        const deleteProduct = await deleteProdFetch(deletedProduct);
+        console.log(deleteProduct);
+        await deleteProdFetch(deletedProduct);
 
-        console.log("from handleSubmit", deletedProduct);
-
-        const updateData = await deleteProduct(deletedProduct);
-
- //       onUpdate(updateData)
-
-
+        
+        
 
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Unknown error');
@@ -120,6 +88,14 @@ export const DeleteProduct: React.FC<any> = ({ productElement, onUpdate }) => {
 
 
         <div>
+
+{loading && <p>Loading...</p>} {/* Show loading message */}
+        {error && (
+          <Box style={{ color: 'red', marginBottom: '10px' }}>
+            Error: {error} {/* Display error message */}
+          </Box>
+        )}
+
           <List>
             <ListItem>
               <Text>
@@ -233,7 +209,7 @@ export const DeleteProduct: React.FC<any> = ({ productElement, onUpdate }) => {
             </ListItem>
     
           </List>
-          <Button style={{backgroundColor:"red", justifyContent:"center", marginTop:"15px"}}>Eliminar</Button>
+          <Button onClick={()=>handleSubmit()} style={{backgroundColor:"red", justifyContent:"center", marginTop:"15px"}}>Eliminar</Button>
         </div>
   )
 }

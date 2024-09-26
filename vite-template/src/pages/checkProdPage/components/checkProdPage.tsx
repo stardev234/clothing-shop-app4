@@ -9,13 +9,13 @@ import { EditProd } from './EditProd';
 import { Pagination } from '@mantine/core';
 import { UpdatedProduct } from './UpdatedProduct';
 import { DeleteProduct } from './DeleteProd';
+import { deleteProdFetch } from '../utils/fetchDeleteProd';
 const CheckProdPage: React.FC = () => {
   // State for storing product data, loading state, and error
   const [product, setProduct] = useState<Product[] | string | Object>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [opened, { open, close }] = useDisclosure(false);
-
   const [prod, setEditingProd] = useState<Product>({});
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [productsPerPage] = useState<number>(20);
@@ -23,7 +23,9 @@ const CheckProdPage: React.FC = () => {
   const totalProducts = (product as Product[]).length;
   const totalPages = Math.ceil(totalProducts / productsPerPage);
   const [updateTrigger, setUpdateTrigger] = useState<boolean>(false);
+  const [deleteTrigger, setDeleteTrigger] = useState<boolean>(false);
   const [updatedProduct, setUpdatedProduct] = useState<Product | null>(null); // State for the updated product
+  const [deletedProduct, setdeletedProduct] = useState<Product | null>(null); // State for the updated product
   const [modalOpen, setModalOpen] = useState<boolean>(false); // State for modal visibility
   const [modalTitle, setModalTitle] = useState<string>("Editar producto")
   const [modalContent, setModalContent] = useState("editMode")
@@ -40,31 +42,32 @@ const CheckProdPage: React.FC = () => {
   const editProducts = (editingProduct: Product) => {
     console.log(editingProduct);
     setEditingProd(editingProduct);
+    console.log(prod);
+    
     open();
   };
 
 
 
-  const deleteProduct = () => {
-    setModalContent("deleteMode")
-    setModalTitle("¿Eliminar el siguiente producto?")
+  const deleteProduct = (product: Product) => {
+   
+    setdeletedProduct(product)
+    setDeleteTrigger(true)
   };
 
 
 
   const handleUpdate = (product: Product) => {
-    console.log("from handle update");
+    console.log("from handle update: ", product);
     setUpdatedProduct(product); // Store the updated product
     console.log("from handleUpdate: ", updatedProduct);
     setModalOpen(true); // Open the modal
     setUpdateTrigger(true); // Set the trigger to true
   };
 
-  useEffect(() => {
-    console.log("from useEffect Prod", prod); // This will log the updated state
-  }, [prod]);
 
-  // useEffect to fetch product data
+
+  // Fetches product data
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -80,6 +83,8 @@ const CheckProdPage: React.FC = () => {
     fetchData();
   }, []);
 
+
+  // updates list of products after 
   useEffect(() => {
     if (updateTrigger) {
 
@@ -100,13 +105,15 @@ const CheckProdPage: React.FC = () => {
     };
   }, [updateTrigger]);
 
+
+//changes modal to delete mode
   useEffect(() => {
-    if (updatedProduct) {
+    if (deleteTrigger) {
       const fetchData = async () => {
         try {
-          console.log("from updated product useEffect: ", updatedProduct);
-          setModalContent("updatedProduct")
-          setModalTitle("Producto editado")
+          console.log("from deletedProductTrigger useEffect: ", deletedProduct);
+          setModalContent("deleteMode")
+          setModalTitle("¿Eliminar el siguiente producto?")
         } catch (err) {
           setError(err instanceof Error ? err.message : 'Unknown error');
         } finally {
@@ -116,7 +123,7 @@ const CheckProdPage: React.FC = () => {
 
       fetchData()
     };
-  }, [updatedProduct]);
+  }, [deletedProduct]);
 
 
 
@@ -136,7 +143,7 @@ const CheckProdPage: React.FC = () => {
           <div>
           {modalContent === 'editMode' && <EditProd productElement={prod} onUpdate={handleUpdate} onDelete={deleteProduct}/>}
           {modalContent === 'updatedProduct' && <UpdatedProduct updatedElement={updatedProduct}  />}
-          {modalContent === 'deleteMode' && <DeleteProduct productElement={prod} onUpdate={handleUpdate}></DeleteProduct>}
+          {modalContent === 'deleteMode' && <DeleteProduct productElement={prod}/>}
           
 
           

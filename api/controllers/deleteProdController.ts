@@ -23,12 +23,10 @@ export async function deleteProduct(req: express.Request, res: express.Response)
             provider,
             _id,
         });
-        console.log();
+        console.log("PRODUCT", product);
         
         const id = product._id
  
-        console.log("id",id, "product", product);
-        
 
         //console.log("product",product);
         

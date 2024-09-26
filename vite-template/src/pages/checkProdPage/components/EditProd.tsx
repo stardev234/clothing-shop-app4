@@ -6,27 +6,10 @@ import { useForm } from "@mantine/form";
 import { FilterProducts } from "../utils/fetchFiltredProds";
 import { newFilter } from "../utils/fetchFiltredProds";
 import { updateProduct } from "../utils/fetchEditProd";
-
-
-
-export interface myProductElement {
-  _id: string,
-  provider: string,
-  name: string,
-  category: string,
-  brand: string,
-  size: string,
-  color: string,
-  material: string,
-  price: string,
-  description: string,
-  stock: Number,
-  gender: string,
-  date: Date,
-}
+import { DeleteProduct } from "./DeleteProd";
 
 export interface productElement {
-  productElement: myProductElement
+  productElement: Product
   onUpdate: () => void; // Add this line
   onDelete: () => void; // Add this line
 }
@@ -70,6 +53,24 @@ export const EditProd: React.FC<any> = ({ productElement, onUpdate, onDelete }) 
     },
   });
 
+  const deletedProduct: Product = {
+
+    name: productElement.name,
+    category: productElement.category,
+    brand: productElement.brand,
+    size: productElement.size,
+    color: productElement.color,
+    material: productElement.material,
+    price: productElement.price,
+    stock: productElement.stock,
+    description: productElement.description,
+    gender: productElement.gender,
+    _id: productElement._id
+
+  }
+  
+  console.log("DELETED PRODDD",deletedProduct);
+  
 
   const handleSubmit = async (values: typeof form.values) => {
     setLoading(true);
@@ -98,9 +99,11 @@ export const EditProd: React.FC<any> = ({ productElement, onUpdate, onDelete }) 
         console.log("from handleSubmit", updatedProduct);
 
         const updateData = await updateProduct(updatedProduct);
-
+        console.log("UPDATE DATA",updateData);
         onUpdate(updateData)
 
+        
+        
 
 
       } catch (err) {

@@ -1,6 +1,6 @@
 // Define a function to make the DELETE request
 import { productElement } from "../components/EditProd";
-
+import { Product } from "@/models/Products";
 export type newFilter = {
 
     name: String, 
@@ -35,14 +35,17 @@ export type newFilter = {
 
 
 
-export async function deleteProduct(product: productElement): Promise<void> {
+export async function deleteProdFetch(product: Product ): Promise<any> {
     try {
+        console.log("FROM DELETEPRODFETCH: ", product);
+        
         const response = await fetch("http://localhost:3006/api/deleteProd", {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
                 // Add any other headers you need, e.g., authorization
             },
+            body: JSON.stringify(product),
         });
 
         // Check if the response is ok (status code 200-299)
@@ -55,6 +58,8 @@ export async function deleteProduct(product: productElement): Promise<void> {
         console.log('Resource deleted:', result);
     } catch (error) {
         console.error('Failed to delete resource:', error);
+        throw error
+        
     }
 }
 
