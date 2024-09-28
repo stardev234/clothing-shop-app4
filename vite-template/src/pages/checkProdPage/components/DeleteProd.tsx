@@ -17,9 +17,10 @@ export interface productElement {
 
 
 type id = { id: String }
-export const DeleteProduct: React.FC<any> = ({productElement}) => {
+export const DeleteProduct: React.FC<any> = ({productElement, onUpdate, onDelete}) => {
 
   
+console.log("ON DELETE",onDelete);
 
   const [product, setProduct] = useState<Product | Array<string> | string | Object>(["defaultProducts"]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -47,7 +48,7 @@ console.log("FROM DELETE HANDLESUBMIT PRODUCT productElement", productElement);
         console.log("FROM DELETE HANDLESUBMIT PRODUCT productElement FETCH DATA", productElement)
 
         const deletedProduct: Product = {
-
+            barcode: productElement.barcode,
             name: productElement.name,
             category: productElement.category,
             brand: productElement.brand,
@@ -66,7 +67,8 @@ console.log("FROM DELETE HANDLESUBMIT PRODUCT productElement", productElement);
         const deleteProduct = await deleteProdFetch(deletedProduct);
         console.log(deleteProduct);
         await deleteProdFetch(deletedProduct);
-
+        console.log("ON DELETE FUNCTION", );
+        onDelete(deletedProduct)
         
         
 

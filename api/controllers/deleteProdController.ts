@@ -35,7 +35,7 @@ export async function deleteProduct(req: express.Request, res: express.Response)
         const result = await Product.findByIdAndDelete(id)
         console.log(result);
         
-        res.send(result);
+        res.json(result);
 /*
         if (!result) {
             console.log('Document not found');

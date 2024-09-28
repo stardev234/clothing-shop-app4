@@ -54,7 +54,7 @@ export const EditProd: React.FC<any> = ({ productElement, onUpdate, onDelete }) 
   });
 
   const deletedProduct: Product = {
-
+    barcode: productElement.barcode,
     name: productElement.name,
     category: productElement.category,
     brand: productElement.brand,
