@@ -33,7 +33,7 @@ export const EditProd: React.FC<any> = ({ productElement, onUpdate, onDelete }) 
   const form = useForm({
     initialValues: {
       _id: productElement._id,
-      provider: "",
+      provider: productElement.provider,
       name: productElement.name,
       category: productElement.category,
       brand: productElement.brand,
@@ -96,7 +96,7 @@ export const EditProd: React.FC<any> = ({ productElement, onUpdate, onDelete }) 
 
         }
 
-        console.log("from handleSubmit", updatedProduct);
+        console.log("from handleSubmitcxddvsdd", updatedProduct);
 
         const updateData = await updateProduct(updatedProduct);
         console.log("UPDATE DATA",updateData);
@@ -116,6 +116,8 @@ export const EditProd: React.FC<any> = ({ productElement, onUpdate, onDelete }) 
 
     fetchData();
 
+    console.log("after fetch data");
+    
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error: {error}</p>
   };

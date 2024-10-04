@@ -1,0 +1,22 @@
+/* print.css */
+@media print {
+    /* Hide all elements by default */
+    .hidden  {
+        display: none !important; /* Hide all elements */
+    }
+
+    /* Only show the barcode container when printing */
+    #barcode-container {
+        border: 5px solid #FEFFFF; /* Border for printing */
+ /* Padding for printing */
+        margin: 20px; /* Optional margin for printing */
+        display: block !important; /* Ensure the barcode container is displayed */
+        text-align: center; /* Center the barcode */
+        visibility: visible; /* Ensure it's visible */
+        position: absolute; /* Keep it in view */
+        top: 0; /* Position it at the top */
+        left: 0; /* Position it at the left */
+    }
+
+
+}

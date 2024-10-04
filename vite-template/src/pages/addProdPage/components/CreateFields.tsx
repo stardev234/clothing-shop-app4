@@ -1,4 +1,4 @@
-import React from 'react';
+/*import React from 'react';
 import { TextInput, Button, Group, Grid, } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { createProduct } from '../utils/postProduct';
@@ -105,3 +105,230 @@ const FormComponent: React.FC = () => {
 };
 
 export default FormComponent;
+*/
+
+import { Box, Button, Card, Drawer, Grid, Group, InputLabel, Menu, Select, Textarea, TextInput, Checkbox, Input, Modal } from "@mantine/core";
+import { useDisclosure } from '@mantine/hooks';
+import { Product } from "@/models/Products";
+import { SetStateAction, useEffect, useState } from "react";
+import { useForm } from "@mantine/form";
+import { createProduct } from "../utils/postProduct";
+import { getBarcode } from "../utils/getBarcode";
+export interface productElement {
+  productElement: Product
+  onUpdate: () => void; // Add this line
+  onDelete: () => void; // Add this line
+}
+
+
+
+type id = { id: String }
+export const CreateFields: React.FC<any> = () => {
+
+
+  const [product, setProduct] = useState<Product | Array<string> | string | Object>(["defaultProducts"]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [date, setDate] = useState('');
+  const [isEnabled, setIsEnabled] = useState(true);
+  const [opened, { open, close }] = useDisclosure(false);
+  const [isAnyFieldEnabled, setIsAnyFieldEnabled] = useState(false);
+
+  console.log("From edit prod",);
+
+  const form = useForm({
+    initialValues: {
+
+      provider: "",
+      name: "",
+      category: "",
+      brand: "",
+      size: "",
+      color: "",
+      material: "",
+      price: "",
+      description: "",
+      stock: "",
+      gender: "",
+      date: new Date
+
+
+    },
+    validate: {
+
+    },
+  });
+
+
+  const handleSubmit = async (values: typeof form.values) => {
+    setLoading(true);
+    setError(null); // Reset error state on new submission
+
+
+    const fetchData = async () => {
+      try {
+        const barcode = await getBarcode()
+
+
+        const updatedProduct: Product = {
+          barcode: barcode,
+          provider: values.provider,
+          name: values.name,
+          category: values.category,
+          brand: values.brand,
+          size: values.size,
+          color: values.color,
+          material: values.material,
+          price: values.price,
+          stock: values.stock,
+          description: values.description,
+          gender: values.gender,
+          date:values.date
+
+        }
+
+        console.log("from handleSubmit", updatedProduct);
+
+        const updateData = await createProduct(updatedProduct);
+        console.log("UPDATE DATA", updateData);
+
+
+
+
+
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Unknown error');
+      } finally {
+        setLoading(false);
+      }
+
+    };
+
+    fetchData();
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error: {error}</p>
+  };
+
+  return (
+
+    <Grid justify="center" style={{ margin: "1px", padding: "1px", width: "1000px" }} >
+      <form
+        onSubmit={form.onSubmit(handleSubmit)}
+      >
+        {loading && <p>Loading...</p>} {/* Show loading message */}
+        {error && (
+          <Box style={{ color: 'red', marginBottom: '10px', width: "10000px" }}>
+            Error: {error} {/* Display error message */}
+          </Box>
+        )}
+        <Group style={{ padding: "100PX" }}>
+          <TextInput
+            label="Fecha"
+            value={date}
+            type="date"  // HTML date input type
+            style={{ marginBottom: 20 }} // Optional styling
+            {...form.getInputProps('date')}
+          />
+
+          <TextInput
+
+            label="Provider"
+            placeholder="proveedor"
+            value={"value"}
+
+            {...form.getInputProps('provider')}
+          />
+
+          <TextInput
+
+            label="Nombre"
+            placeholder="Nombre"
+
+            {...form.getInputProps('name')}
+          />
+        </Group>
+
+        <Select
+          label="Categoria"
+          placeholder="Elija una categoria"
+          data={["Camisa", "Remera", "Pantalon", "Short", "Falda", "Vestido", "Accesorio", "Conjunto", "Campera", "Ropa interior", "Calzado"]}
+          {...form.getInputProps('category')}
+        />
+
+        <TextInput
+          label="Marca"
+          placeholder="Marca"
+          {...form.getInputProps('brand')}
+        />
+
+        <Group>
+          <TextInput
+            label="Talle"
+            placeholder="Talle"
+            {...form.getInputProps('size')}
+          />
+
+
+          <TextInput
+            label="Color"
+            placeholder="Color"
+            {...form.getInputProps('color')}
+          />
+        </Group>
+
+        <Group>
+          <TextInput
+            label="Material"
+            placeholder="Material"
+            {...form.getInputProps('material')}
+          />
+
+          <TextInput
+            label="Precio"
+            placeholder="Precio"
+            {...form.getInputProps('price')}
+          />
+        </Group>
+
+
+        <Group>
+          <TextInput
+            type="number"
+            label="Stock (solo numeros)"
+            placeholder="Stock"
+            {...form.getInputProps('stock')}
+          />
+
+
+
+          <TextInput
+            label="Descripcion"
+            placeholder="Descripcion"
+            {...form.getInputProps('description')}
+          />
+
+        </Group>
+        <Select
+          label="Genero"
+          placeholder="Elija un Genero"
+          data={["Hombre", "Mujer", "Unisex"]}
+          {...form.getInputProps('gender')}
+        />
+
+
+
+        <Button onClick={close} type="submit" style={{ marginTop: "10px" }}>Enviar</Button>
+
+
+
+
+      </form>
+
+
+    </Grid>
+
+  )
+}
+
+

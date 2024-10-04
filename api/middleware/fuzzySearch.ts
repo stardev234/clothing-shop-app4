@@ -83,7 +83,7 @@ async function fuzzySearch(name: string): Promise<SearchResult[]> {
     _id: any; 
     name: any; 
 }; }) => ({
-    barcode: result.item.barcode.toString(),
+    barcode: result.item.barcode,
     name: result.item.name,
     category: result.item.category,
     brand: result.item.brand,

@@ -31,7 +31,7 @@ const CheckProdPage: React.FC = () => {
   const [modalOpen, setModalOpen] = useState<boolean>(false); // State for modal visibility
   const [modalTitle, setModalTitle] = useState<string>("Editar producto")
   const [modalContent, setModalContent] = useState("editMode")
-  const currentProducts = (product as Product[]).slice(
+  const currentProducts = (product as Product[]).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(
     (currentPage - 1) * productsPerPage,
     currentPage * productsPerPage
   );
@@ -98,7 +98,7 @@ const CheckProdPage: React.FC = () => {
   }, []);
 
 
-  // updates list of products after 
+  // updates list of products after editing
   useEffect(() => {
     if (updateTrigger) {
 
@@ -107,7 +107,7 @@ const CheckProdPage: React.FC = () => {
           const productData = await getProducts();
           setProduct(productData);
           setUpdateTrigger(false)
-
+          setModalContent("updatedProduct")
           console.log("from useEffect update trigger");
 
         } catch (err) {
@@ -118,7 +118,7 @@ const CheckProdPage: React.FC = () => {
       };
       fetchData()
     };
-  }, [deletedProduct]);
+  }, [updatedProduct]);
 
 
   //changes modal to delete mode
@@ -157,6 +157,28 @@ const CheckProdPage: React.FC = () => {
         }
       };
 
+      fetchData()
+    };
+  }, [deletedProduct]);
+
+   // updates list of products after deleting
+   useEffect(() => {
+    if (updateTrigger) {
+
+      const fetchData = async () => {
+        try {
+          const productData = await getProducts();
+          setProduct(productData);
+          setUpdateTrigger(false)
+
+          console.log("from useEffect update trigger");
+
+        } catch (err) {
+          setError(err instanceof Error ? err.message : 'Unknown error');
+        } finally {
+          setLoading(false);
+        }
+      };
       fetchData()
     };
   }, [deletedProduct]);

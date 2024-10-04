@@ -12,6 +12,7 @@
     "bwip-js": "^4.5.1",
     "fuse.js": "^7.0.0",
     "mongoose": "^8.6.1",
+    "react-barcode": "^1.5.3",
     "uuid": "^10.0.0"
   },
   "devDependencies": {

@@ -14,7 +14,7 @@ const productSchema: ProductSchema = JSON.parse(fs.readFileSync(path.join(__dirn
 
 const validateProduct = ajv.compile(productSchema);
 
-export function validateData(req: express.Request, res: express.Response, next: express.NextFunction): void {
+export function validateData(req: express.Request, res: express.Response, next: express.NextFunction): void|express.Response{
   console.log('From validate data');
 
   const valid = validateProduct(req.body);
@@ -26,7 +26,7 @@ export function validateData(req: express.Request, res: express.Response, next: 
 
     console.log(validateProduct.errors);
 
-    res.status(400).json({ errors: validateProduct.errors });
+   return res.status(400).json({ errors: validateProduct.errors });
   }
 
   console.log('from next');

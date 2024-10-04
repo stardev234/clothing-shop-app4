@@ -24,7 +24,9 @@ export async function postProduct(req: express.Request, res: express.Response): 
       provider,
     });
     const result = await product.save();
-    console.log(product);
+
+    console.log(result);
+    
     
     res.send(result);
 

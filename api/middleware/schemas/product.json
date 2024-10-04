@@ -7,6 +7,10 @@
         "type": "string",
         "minLength": 30
       },
+      "provider": {
+        "type": "string",
+        "minLength": 1
+      },
       "name": {
         "type": "string",
         "minLength": 1
@@ -43,12 +47,12 @@
         "type": "string"
       },
       "date": {
-        "type": "string",
-        "format": "date-time"
+        "type": "string"
+
       },
       "gender": {
         "type": "string",
-        "enum": ["h", "m"]
+        "enum": ["Hombre", "Mujer", "Unisex"]
       }
     },
     "required": ["barcode","name", "category", "price", "stock"],
