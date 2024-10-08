@@ -107,13 +107,22 @@ const FormComponent: React.FC = () => {
 export default FormComponent;
 */
 
-import { Box, Button, Card, Drawer, Grid, Group, InputLabel, Menu, Select, Textarea, TextInput, Checkbox, Input, Modal } from "@mantine/core";
+
+import { Box, Button, Card, Drawer, Grid, Group, InputLabel, Menu, Select, Textarea, TextInput, Checkbox, Input, Modal, List, ListItem, Text } from "@mantine/core";
 import { useDisclosure } from '@mantine/hooks';
 import { Product } from "@/models/Products";
 import { SetStateAction, useEffect, useState } from "react";
 import { useForm } from "@mantine/form";
 import { createProduct } from "../utils/postProduct";
 import { getBarcode } from "../utils/getBarcode";
+import { ProductResponse } from "@/models/CreateProd";
+import BarcodePrinter from "./PrintComponent";
+import PrintComponent from "./Print";
+import './print.css';
+import QZPrintComponent from "./QzPrint";
+
+
+
 export interface productElement {
   productElement: Product
   onUpdate: () => void; // Add this line
@@ -131,9 +140,9 @@ export const CreateFields: React.FC<any> = () => {
   const [error, setError] = useState<string | null>(null);
   const [date, setDate] = useState('');
   const [isEnabled, setIsEnabled] = useState(true);
-  const [opened, { open, close }] = useDisclosure(false);
+  const [showSuccess, setSuccess] = useState(false);
   const [isAnyFieldEnabled, setIsAnyFieldEnabled] = useState(false);
-
+  const [barcodeOpened, { open: openBarcode, close: closeBarcode }] = useDisclosure(false);
   console.log("From edit prod",);
 
   const form = useForm({
@@ -159,6 +168,12 @@ export const CreateFields: React.FC<any> = () => {
     },
   });
 
+  /*
+    useEffect(() => {
+      setProduct(updateData)
+   }, [product]);
+  
+  */
 
   const handleSubmit = async (values: typeof form.values) => {
     setLoading(true);
@@ -183,16 +198,20 @@ export const CreateFields: React.FC<any> = () => {
           stock: values.stock,
           description: values.description,
           gender: values.gender,
-          date:values.date
+          date: values.date
 
         }
 
         console.log("from handleSubmit", updatedProduct);
 
-        const updateData = await createProduct(updatedProduct);
-        console.log("UPDATE DATA", updateData);
+        setProduct(await createProduct(updatedProduct))
 
 
+
+        console.log("UPDATE DATA", product);
+
+
+        /*form.reset()*/
 
 
 
@@ -212,122 +231,254 @@ export const CreateFields: React.FC<any> = () => {
 
   return (
 
-    <Grid justify="center" style={{ margin: "1px", padding: "1px", width: "1000px" }} >
-      <form
-        onSubmit={form.onSubmit(handleSubmit)}
-      >
-        {loading && <p>Loading...</p>} {/* Show loading message */}
-        {error && (
-          <Box style={{ color: 'red', marginBottom: '10px', width: "10000px" }}>
-            Error: {error} {/* Display error message */}
-          </Box>
-        )}
-        <Group style={{ padding: "100PX" }}>
-          <TextInput
-            label="Fecha"
-            value={date}
-            type="date"  // HTML date input type
-            style={{ marginBottom: 20 }} // Optional styling
-            {...form.getInputProps('date')}
+    <div className="hidden">
+<QZPrintComponent ></QZPrintComponent>
+
+      <div >
+        {showSuccess && (
+
+          <>
+
+
+
+            <List className="hidden">
+              <ListItem className="hidden">
+                <Text className="hidden" >
+                  <span style={{ fontWeight: 'bold' }}>
+                    Codigo de barras: {" "}
+                  </span>
+                  {product.barcode}
+                </Text>
+              </ListItem>
+
+              <ListItem>
+                <Text>
+                  <span style={{ fontWeight: 'bold' }}>
+                    Nombre: {" "}
+                  </span>
+                  {product.name}
+                </Text>
+              </ListItem>
+
+              <ListItem>
+                <Text>
+                  <span style={{ fontWeight: 'bold' }}>
+                    Categoria: {" "}
+                  </span>
+                  {product.category}
+                </Text>
+              </ListItem>
+
+              <ListItem>
+                <Text>
+                  <span style={{ fontWeight: 'bold' }}>
+                    Marca: {" "}
+                  </span>-ñ.
+                  {product.brand}
+                </Text>
+              </ListItem>
+
+
+              <ListItem>
+                <Text>
+                  <span style={{ fontWeight: 'bold' }}>
+                    Talle: {" "}
+                  </span>
+                  {product.size}
+                </Text>
+              </ListItem>
+
+
+              <ListItem>
+                <Text>
+                  <span style={{ fontWeight: 'bold' }}>
+                    Color: {" "}
+                  </span>
+                  {product.color}
+                </Text>
+              </ListItem>
+
+              <ListItem>
+                <Text>
+                  <span style={{ fontWeight: 'bold' }}>
+                    Material: {" "}
+                  </span>
+                  {product.material}
+                </Text>
+              </ListItem>
+
+              <ListItem>
+                <Text>
+                  <span style={{ fontWeight: 'bold' }}>
+                    Stock: {" "}
+                  </span>
+                  {product.stock}
+                </Text>
+              </ListItem>
+
+              <ListItem>
+                <Text>
+                  <span style={{ fontWeight: 'bold' }}>
+                    Descripción: {" "}
+                  </span>
+                  {product.description}
+                </Text>
+              </ListItem>
+
+              <ListItem>
+                <Text>
+                  <span style={{ fontWeight: 'bold' }}>
+                    Fecha: {" "}
+                  </span>
+                  {product.date}
+                </Text>
+              </ListItem>
+
+              <ListItem>
+                <Text>
+                  <span style={{ fontWeight: 'bold' }}>
+                    Género: {" "}
+                  </span>
+                  {product.gender}
+                </Text>
+              </ListItem>
+
+
+              <ListItem>
+                <Text>
+                  <span style={{ fontWeight: 'bold' }}>
+                    Precio: {" "}
+                  </span>
+                  {product.price}
+                </Text>
+              </ListItem>
+
+            </List><Button onClick={close}>Añadir Otro Producto</Button><Button onClick={close}>Añadir Otro Producto</Button><Button onClick={close}>Imprimir codigo de Barras</Button></>)
+        }
+      </div>
+
+
+
+      <Grid justify="center" style={{ margin: "1px", padding: "1px", width: "1000px" }} >
+        <form
+          onSubmit={form.onSubmit(handleSubmit)}
+        >
+          {loading && <p>Loading...</p>} {/* Show loading message */}
+          {error && (
+            <Box style={{ color: 'red', marginBottom: '10px', width: "100px" }}>
+              Error: {error} {/* Display error message */}
+
+            </Box>
+          )}
+
+
+
+          <Group style={{ padding: "100PX" }}>
+            <TextInput
+              label="Fecha"
+              value={date}
+              type="date"  // HTML date input type
+              style={{ marginBottom: 20 }} // Optional styling
+              {...form.getInputProps('date')}
+            />
+
+            <TextInput
+
+              label="Provider"
+              placeholder="proveedor"
+              value={"value"}
+
+              {...form.getInputProps('provider')}
+            />
+
+            <TextInput
+
+              label="Nombre"
+              placeholder="Nombre"
+
+              {...form.getInputProps('name')}
+            />
+          </Group>
+
+          <Select
+            label="Categoria"
+            placeholder="Elija una categoria"
+            data={["Camisa", "Remera", "Pantalon", "Short", "Falda", "Vestido", "Accesorio", "Conjunto", "Campera", "Ropa interior", "Calzado"]}
+            {...form.getInputProps('category')}
           />
 
           <TextInput
-
-            label="Provider"
-            placeholder="proveedor"
-            value={"value"}
-
-            {...form.getInputProps('provider')}
+            label="Marca"
+            placeholder="Marca"
+            {...form.getInputProps('brand')}
           />
 
-          <TextInput
-
-            label="Nombre"
-            placeholder="Nombre"
-
-            {...form.getInputProps('name')}
-          />
-        </Group>
-
-        <Select
-          label="Categoria"
-          placeholder="Elija una categoria"
-          data={["Camisa", "Remera", "Pantalon", "Short", "Falda", "Vestido", "Accesorio", "Conjunto", "Campera", "Ropa interior", "Calzado"]}
-          {...form.getInputProps('category')}
-        />
-
-        <TextInput
-          label="Marca"
-          placeholder="Marca"
-          {...form.getInputProps('brand')}
-        />
-
-        <Group>
-          <TextInput
-            label="Talle"
-            placeholder="Talle"
-            {...form.getInputProps('size')}
-          />
+          <Group>
+            <TextInput
+              label="Talle"
+              placeholder="Talle"
+              {...form.getInputProps('size')}
+            />
 
 
-          <TextInput
-            label="Color"
-            placeholder="Color"
-            {...form.getInputProps('color')}
-          />
-        </Group>
+            <TextInput
+              label="Color"
+              placeholder="Color"
+              {...form.getInputProps('color')}
+            />
+          </Group>
 
-        <Group>
-          <TextInput
-            label="Material"
-            placeholder="Material"
-            {...form.getInputProps('material')}
-          />
+          <Group>
+            <TextInput
+              label="Material"
+              placeholder="Material"
+              {...form.getInputProps('material')}
+            />
 
-          <TextInput
-            label="Precio"
-            placeholder="Precio"
-            {...form.getInputProps('price')}
-          />
-        </Group>
+            <TextInput
+              label="Precio"
+              placeholder="Precio"
+              {...form.getInputProps('price')}
+            />
+          </Group>
 
 
-        <Group>
-          <TextInput
-            type="number"
-            label="Stock (solo numeros)"
-            placeholder="Stock"
-            {...form.getInputProps('stock')}
+          <Group>
+            <TextInput
+              type="number"
+              label="Stock (solo numeros)"
+              placeholder="Stock"
+              {...form.getInputProps('stock')}
+            />
+
+
+
+            <TextInput
+              label="Descripcion"
+              placeholder="Descripcion"
+              {...form.getInputProps('description')}
+            />
+
+          </Group>
+          <Select
+            label="Genero"
+            placeholder="Elija un Genero"
+            data={["Hombre", "Mujer", "Unisex"]}
+            {...form.getInputProps('gender')}
           />
 
 
 
-          <TextInput
-            label="Descripcion"
-            placeholder="Descripcion"
-            {...form.getInputProps('description')}
-          />
-
-        </Group>
-        <Select
-          label="Genero"
-          placeholder="Elija un Genero"
-          data={["Hombre", "Mujer", "Unisex"]}
-          {...form.getInputProps('gender')}
-        />
-
-
-
-        <Button onClick={close} type="submit" style={{ marginTop: "10px" }}>Enviar</Button>
+          <Button onClick={close} type="submit" style={{ marginTop: "10px" }}>Enviar</Button>
 
 
 
 
-      </form>
+        </form>
 
 
-    </Grid>
-
+      </Grid>
+    </div>
   )
 }
 

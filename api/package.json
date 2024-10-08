@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "base-x": "^5.0.0",
     "bwip-js": "^4.5.1",
     "fuse.js": "^7.0.0",
     "mongoose": "^8.6.1",

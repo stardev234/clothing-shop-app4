@@ -5,7 +5,7 @@
     "properties": {
       "barcode": {
         "type": "string",
-        "minLength": 30
+        "minLength": 0
       },
       "provider": {
         "type": "string",

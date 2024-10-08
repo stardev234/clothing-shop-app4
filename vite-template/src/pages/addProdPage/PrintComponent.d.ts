@@ -11,9 +11,14 @@ declare module 'jsprintmanager' {
     }
 
     interface JSPrintManager {
+        PrintJob: any;
         autoReconnect: boolean;
         start(): void;
         getInstance(): {
+            onConnectionLost: () => void;
+            connect(): unknown;
+            disconnect(): unknown;
+            onConnectionStatusChanged: (status: any) => void;
             onConnectionSuccess: () => void;
             onConnectionError: () => void;
             onGetPrinters: (printers: Printer[]) => void;

@@ -23,44 +23,53 @@ const App: React.FC = () => {
 
 export default App;
 */
-
 import React, { useState } from 'react';
-import Barcode from 'react-barcode';
+import BWIPJS from 'bwip-js';
 import './print.css';
-const BarcodePrinter: React.FC = () => {
-    const [inputValue, setInputValue] = useState<string>('');
+
+type BarcodePrinterProps = {
+    barcode: string;
+};
+
+const BarcodePrinter: React.FC<BarcodePrinterProps> = ({ barcode }) => {
     const [barcodeValue, setBarcodeValue] = useState<string | null>(null);
 
     const handlePrint = () => {
         setTimeout(() => {
             window.print();
-        }, 100); // Delay to allow barcode to render
+        }, 500); // Increase delay if necessary
     };
 
     const handleGenerateBarcode = () => {
-        setBarcodeValue(inputValue);
+        setBarcodeValue(barcode);
     };
 
     return (
         <div>
-            <h1 className='hidden'>Barcode Generator</h1>
-            <input className='hidden'
-                type="text"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                placeholder="Enter a number"
-            />
             <button className='hidden' onClick={handleGenerateBarcode}>Generate Barcode</button>
             {barcodeValue && (
                 <div>
-                <div id="barcode-container">
-                    <Barcode value={barcodeValue} />
-                    
+                    <button className='hidden' onClick={handlePrint}>Print Barcode</button>
+                    <canvas
+                        id="barcode"
+                        ref={canvas => {
+                            if (canvas) {
+                                BWIPJS.toCanvas(canvas, {
+                                    bcid: 'code128',        // Barcode type
+                                    text: barcodeValue,     // Text to encode
+                                    scale: 3,               // Scale factor
+                                    height: 10,             // Height of the barcode
+                                    includetext: true,      // Show text below the barcode
+                                    textxalign: 'center',   // Center the text
+                                });
+                            }
+                        }}
+                    />
                 </div>
-                <button className='hidden' onClick={handlePrint}>Print Barcode</button></div>
             )}
-            {!barcodeValue && <p>Please enter a number to generate a barcode.</p>}
+            {!barcodeValue && <p className='hidden'>Please enter a number to generate a barcode.</p>}
         </div>
     );
 };
+
 export default BarcodePrinter;
