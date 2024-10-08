@@ -4,6 +4,7 @@ import { Product } from '@/models/Products';
 import { Card, Text, Group, Button, Modal, TextInput, Table, Container } from '@mantine/core';
 import { FilteringBar } from "./FilteringBar";
 import { IconEdit } from '@tabler/icons-react';
+import { IconPrinter } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import { EditProd } from './EditProd';
 import { Pagination } from '@mantine/core';
@@ -11,8 +12,11 @@ import { UpdatedProduct } from './UpdatedProduct';
 import { DeleteProduct } from './DeleteProd';
 import { deleteProdFetch } from '../utils/fetchDeleteProd';
 import { DeletedProduct } from './DeletedProdModal';
+import PrintComponent from '@/pages/addProdPage/components/Print';
+import SuccessComponent from '@/pages/addProdPage/components/SuccesComponent';
 const CheckProdPage: React.FC = () => {
   // State for storing product data, loading state, and error
+  
   const [product, setProduct] = useState<Product[] | string | Object>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -21,6 +25,7 @@ const CheckProdPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [productsPerPage] = useState<number>(20);
   const icon = <IconEdit size={22} />;
+  const printerIcon = <IconPrinter size={22} style={{ }} ></IconPrinter>
   const totalProducts = (product as Product[]).length;
   const totalPages = Math.ceil(totalProducts / productsPerPage);
   const [updateTrigger, setUpdateTrigger] = useState<boolean>(false);
@@ -204,6 +209,9 @@ const CheckProdPage: React.FC = () => {
             {modalContent === 'updatedProduct' && <UpdatedProduct updatedElement={updatedProduct} />}
             {modalContent === 'deleteMode' && <DeleteProduct productElement={prod} onDelete={handleDelete} />}
             {modalContent === 'deletedProduct' && <DeletedProduct deletedElement={deletedProduct} />}
+            {modalContent === 'printingMode' && <SuccessComponent product={prod} onAddAnother={function (): void {
+              throw new Error('Function not implemented.');
+            } }></SuccessComponent>}
           </div>
 
 
@@ -242,6 +250,13 @@ const CheckProdPage: React.FC = () => {
                   >
                     {icon}
                   </Button>
+                  <Button
+                  onClick={() => {
+                    editProducts(product);
+                    setModalContent("printingMode");
+                    setModalTitle("Imprimir Producto")
+                  }}
+                   style={{ width: "50px", padding: "0px", margin: "0px", backgroundColor:"green" }}>{printerIcon}</Button>
                 </td>
                 <td style={{ fontSize: '1.1em' }}>{product.barcode}</td>
                 <td style={{ fontSize: '1.1em' }}>{product.name}</td>

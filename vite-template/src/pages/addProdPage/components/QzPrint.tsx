@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import qz from 'qz-tray';
 import { jsPDF } from 'jspdf';
 import JsBarcode from 'jsbarcode';
+import { Button, Group, NumberInput } from '@mantine/core';
 const privateKeyUrl = "-----BEGIN PRIVATE KEY-----\n" +
     "MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDZX7C7L93uaGqV\n" +
     "5OTO9wvOC33HR50+V7sEMqTfnBN5BzeKG4Lc5PMzVNg8Vwdinxdy+rfo2dkh2lPG\n" +
@@ -60,23 +61,32 @@ const certificateUrl = "-----BEGIN CERTIFICATE-----\n" +
 
 import jsrsasign from 'jsrsasign';
 
+import Barcode from 'react-barcode';
+interface PrintComponentProps {
+    barcodeText: string; // Define the barcodeText prop
+}
 
 
-const PrintComponent: React.FC = () => {
+
+//const barcodeText = 'GTbfNT4ATJy1';
+const PrintComponent: React.FC<PrintComponentProps> = ({ barcodeText }) => {
     /*const certificateUrl = "/digital-certificate.txt"; // Path to your certificate
     const privateKeyUrl = "/private-key.pem"; // Path to your private key
 */
 
-    const [inputValue, setInputValue] = useState('');
-  
-    const handleChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
-      setInputValue(event.target.value);
-    };
-  
-    const handleSubmit = (event: { preventDefault: () => void; }) => {
-      event.preventDefault();
-      console.log(inputValue); // Handle the input value here (e.g., send it to an API)
-    };
+const [inputValue, setInputValue] = useState<number>(1);
+
+
+
+const handleChange = (value: number | string) => {
+    // Convert value to number, setting to 0 if it's an empty string
+    setInputValue(value === '' ? 0 : Number(value));
+};
+
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    console.log(inputValue); // Handle the input value here (e.g., send it to an API)
+  };
 
 
 
@@ -147,7 +157,7 @@ const PrintComponent: React.FC = () => {
             await connectToQZ();
         }
 */
-        const barcodeText = 'GTbfNT4ATJy1'; // Example barcode text
+         // Example barcode text
         const barcodeCanvas = document.createElement('canvas');
         JsBarcode(barcodeCanvas, barcodeText, {
             format: 'CODE128',
@@ -169,7 +179,7 @@ const PrintComponent: React.FC = () => {
             format: 'base64',
             data: pdfData.split(',')[1], // Extract base64 data
         }];
-        
+
 
         const printOptions = {
             copies: 2, // Set the number of copies
@@ -179,11 +189,11 @@ const PrintComponent: React.FC = () => {
 
         try {
 
-                await qz.print(config, data, printOptions);
-                console.log("Print job sent successfully.");
-        
+            await qz.print(config, data, printOptions);
+            console.log("Print job sent successfully.");
 
-            
+
+
         } catch (e) {
             console.error("Print job failed:", e);
         }
@@ -192,14 +202,23 @@ const PrintComponent: React.FC = () => {
 
     return (
         <div>
-            <h1>Barcode Printing</h1>
-            <input
-                type="text"
+            
+            <Group>
+            <div>Cantidad de copias a imprimir: </div>
+      
+            <NumberInput
                 value={inputValue}
                 onChange={handleChange}
-                placeholder="Type something..."
+                placeholder="Type a number..."
+                min={0} // Optional: set minimum value
+                max={100} // Optional: set maximum value
             />
-            <button onClick={() => { printBarcode(parseInt(inputValue)) }}>Print Barcode</button>
+            
+            </Group>
+            <Barcode value={barcodeText}></Barcode>
+            <Button onClick={() => { printBarcode(inputValue)}} >Imprimir codigo de barras</Button>
+            
+        
         </div>
     );
 };

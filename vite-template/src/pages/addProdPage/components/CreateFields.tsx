@@ -120,7 +120,7 @@ import BarcodePrinter from "./PrintComponent";
 import PrintComponent from "./Print";
 import './print.css';
 import QZPrintComponent from "./QzPrint";
-
+import SuccessComponent from "./SuccesComponent";
 
 
 export interface productElement {
@@ -143,6 +143,8 @@ export const CreateFields: React.FC<any> = () => {
   const [showSuccess, setSuccess] = useState(false);
   const [isAnyFieldEnabled, setIsAnyFieldEnabled] = useState(false);
   const [barcodeOpened, { open: openBarcode, close: closeBarcode }] = useDisclosure(false);
+  const [opened, { open, close }] = useDisclosure(false);
+
   console.log("From edit prod",);
 
   const form = useForm({
@@ -206,14 +208,14 @@ export const CreateFields: React.FC<any> = () => {
 
         setProduct(await createProduct(updatedProduct))
 
-
-
+        setSuccess(true)
+        open()
         console.log("UPDATE DATA", product);
 
-
+      
         /*form.reset()*/
 
-
+        
 
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Unknown error');
@@ -231,135 +233,21 @@ export const CreateFields: React.FC<any> = () => {
 
   return (
 
-    <div className="hidden">
-<QZPrintComponent ></QZPrintComponent>
+    <div >
+{/*<QZPrintComponent ></QZPrintComponent>*/}
 
       <div >
-        {showSuccess && (
-
-          <>
-
-
-
-            <List className="hidden">
-              <ListItem className="hidden">
-                <Text className="hidden" >
-                  <span style={{ fontWeight: 'bold' }}>
-                    Codigo de barras: {" "}
-                  </span>
-                  {product.barcode}
-                </Text>
-              </ListItem>
-
-              <ListItem>
-                <Text>
-                  <span style={{ fontWeight: 'bold' }}>
-                    Nombre: {" "}
-                  </span>
-                  {product.name}
-                </Text>
-              </ListItem>
-
-              <ListItem>
-                <Text>
-                  <span style={{ fontWeight: 'bold' }}>
-                    Categoria: {" "}
-                  </span>
-                  {product.category}
-                </Text>
-              </ListItem>
-
-              <ListItem>
-                <Text>
-                  <span style={{ fontWeight: 'bold' }}>
-                    Marca: {" "}
-                  </span>-ñ.
-                  {product.brand}
-                </Text>
-              </ListItem>
-
-
-              <ListItem>
-                <Text>
-                  <span style={{ fontWeight: 'bold' }}>
-                    Talle: {" "}
-                  </span>
-                  {product.size}
-                </Text>
-              </ListItem>
-
-
-              <ListItem>
-                <Text>
-                  <span style={{ fontWeight: 'bold' }}>
-                    Color: {" "}
-                  </span>
-                  {product.color}
-                </Text>
-              </ListItem>
-
-              <ListItem>
-                <Text>
-                  <span style={{ fontWeight: 'bold' }}>
-                    Material: {" "}
-                  </span>
-                  {product.material}
-                </Text>
-              </ListItem>
-
-              <ListItem>
-                <Text>
-                  <span style={{ fontWeight: 'bold' }}>
-                    Stock: {" "}
-                  </span>
-                  {product.stock}
-                </Text>
-              </ListItem>
-
-              <ListItem>
-                <Text>
-                  <span style={{ fontWeight: 'bold' }}>
-                    Descripción: {" "}
-                  </span>
-                  {product.description}
-                </Text>
-              </ListItem>
-
-              <ListItem>
-                <Text>
-                  <span style={{ fontWeight: 'bold' }}>
-                    Fecha: {" "}
-                  </span>
-                  {product.date}
-                </Text>
-              </ListItem>
-
-              <ListItem>
-                <Text>
-                  <span style={{ fontWeight: 'bold' }}>
-                    Género: {" "}
-                  </span>
-                  {product.gender}
-                </Text>
-              </ListItem>
-
-
-              <ListItem>
-                <Text>
-                  <span style={{ fontWeight: 'bold' }}>
-                    Precio: {" "}
-                  </span>
-                  {product.price}
-                </Text>
-              </ListItem>
-
-            </List><Button onClick={close}>Añadir Otro Producto</Button><Button onClick={close}>Añadir Otro Producto</Button><Button onClick={close}>Imprimir codigo de Barras</Button></>)
+        {showSuccess && (<Modal opened={opened} onClose={close} title="Producto añadido correctamente">
+          <SuccessComponent product={product} onAddAnother={function (): void {
+          throw new Error("Function not implemented.");
+        } }></SuccessComponent></Modal>)
+        
         }
       </div>
 
 
 
-      <Grid justify="center" style={{ margin: "1px", padding: "1px", width: "1000px" }} >
+      <Grid justify="center" style={{ margin: "1px", padding: "100px", width: "1800px" }} >
         <form
           onSubmit={form.onSubmit(handleSubmit)}
         >
@@ -373,12 +261,13 @@ export const CreateFields: React.FC<any> = () => {
 
 
 
-          <Group style={{ padding: "100PX" }}>
-            <TextInput
+          <Group >
+            < TextInput 
+              style={{width:"185px"}}
               label="Fecha"
               value={date}
               type="date"  // HTML date input type
-              style={{ marginBottom: 20 }} // Optional styling
+             
               {...form.getInputProps('date')}
             />
 
@@ -400,6 +289,7 @@ export const CreateFields: React.FC<any> = () => {
             />
           </Group>
 
+
           <Select
             label="Categoria"
             placeholder="Elija una categoria"
@@ -413,7 +303,7 @@ export const CreateFields: React.FC<any> = () => {
             {...form.getInputProps('brand')}
           />
 
-          <Group>
+          <Group style={{}}>
             <TextInput
               label="Talle"
               placeholder="Talle"
@@ -426,21 +316,22 @@ export const CreateFields: React.FC<any> = () => {
               placeholder="Color"
               {...form.getInputProps('color')}
             />
-          </Group>
-
-          <Group>
-            <TextInput
+          <TextInput
               label="Material"
               placeholder="Material"
               {...form.getInputProps('material')}
             />
 
+          </Group>
+
+          <Group>
+            
             <TextInput
               label="Precio"
               placeholder="Precio"
               {...form.getInputProps('price')}
             />
-          </Group>
+          
 
 
           <Group>
@@ -451,7 +342,7 @@ export const CreateFields: React.FC<any> = () => {
               {...form.getInputProps('stock')}
             />
 
-
+</Group>
 
             <TextInput
               label="Descripcion"

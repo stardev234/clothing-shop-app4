@@ -7,13 +7,11 @@ import './components/print.css';
 export default function AddProdPage() {
 
     return (
-        <div >
+        <div style={{justifyContent:"center"}} >
       
-        <div className='hidden' >
+   
         <CreateFields/>
-        </div>
-        <BarcodePrinter barcode='weiwerweu'/>
-        {/*<BarcodePrinter />*/}
+
         </div>
    
     )
