@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { getProducts } from '../utils/fetchProds';
 import { Product } from '@/models/Products';
-import { Card, Text, Group, Button, Modal, TextInput, Table, Container } from '@mantine/core';
+import { Card, Text, Group, Button, Modal, TextInput, Table, Container, Stack } from '@mantine/core';
 import { FilteringBar } from "./FilteringBar";
-import { IconEdit } from '@tabler/icons-react';
-import { IconPrinter } from '@tabler/icons-react';
+import { IconEdit, IconShoppingCart, IconPrinter } from '@tabler/icons-react';
+
 import { useDisclosure } from '@mantine/hooks';
 import { EditProd } from './EditProd';
 import { Pagination } from '@mantine/core';
@@ -14,9 +14,11 @@ import { deleteProdFetch } from '../utils/fetchDeleteProd';
 import { DeletedProduct } from './DeletedProdModal';
 import PrintComponent from '@/pages/addProdPage/components/Print';
 import SuccessComponent from '@/pages/addProdPage/components/SuccesComponent';
+import BarcodeScanner from './BarcodeScanner';
+import { ShoppingCart } from './shoppingCart';
 const CheckProdPage: React.FC = () => {
   // State for storing product data, loading state, and error
-  
+
   const [product, setProduct] = useState<Product[] | string | Object>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,7 +27,8 @@ const CheckProdPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [productsPerPage] = useState<number>(20);
   const icon = <IconEdit size={22} />;
-  const printerIcon = <IconPrinter size={22} style={{ }} ></IconPrinter>
+  const printerIcon = <IconPrinter size={22} style={{}} ></IconPrinter>
+
   const totalProducts = (product as Product[]).length;
   const totalPages = Math.ceil(totalProducts / productsPerPage);
   const [updateTrigger, setUpdateTrigger] = useState<boolean>(false);
@@ -77,13 +80,28 @@ const CheckProdPage: React.FC = () => {
 
   const handleDelete = (product: Product) => {
     console.log("from handle delete", product);
-    
+
     setdeletedProduct(product)
     setDeletedProductTrigger(true)
     setUpdateTrigger(true)
   };
 
-
+  interface DateFormatProps {
+    isoDate: string;
+  }
+  
+  const formatDate = (isoDate: string): string => {
+    const date = new Date(isoDate);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const year = date.getFullYear();
+  
+    return `${day}/${month}/${year}`;
+  };
+  
+  const DateFormat: React.FC<DateFormatProps> = ({ isoDate }) => {
+    return <span>{formatDate(isoDate)}</span>;
+  };
 
 
   // Fetches product data
@@ -166,8 +184,8 @@ const CheckProdPage: React.FC = () => {
     };
   }, [deletedProduct]);
 
-   // updates list of products after deleting
-   useEffect(() => {
+  // updates list of products after deleting
+  useEffect(() => {
     if (updateTrigger) {
 
       const fetchData = async () => {
@@ -196,93 +214,97 @@ const CheckProdPage: React.FC = () => {
 
 
 
+  
+
   return (
     <div>
-      <FilteringBar onAction={updateProducts} />
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: "center" }}>
+      <BarcodeScanner />
 
-        <Modal opened={opened} onClose={() => { close() }}
-          title={modalTitle} size={"md"} >
-
+      <div>
+        <Modal opened={opened} onClose={close} title={modalTitle} size="md">
           <div>
             {modalContent === 'editMode' && <EditProd productElement={prod} onUpdate={handleUpdate} onDelete={deleteProduct} />}
             {modalContent === 'updatedProduct' && <UpdatedProduct updatedElement={updatedProduct} />}
             {modalContent === 'deleteMode' && <DeleteProduct productElement={prod} onDelete={handleDelete} />}
             {modalContent === 'deletedProduct' && <DeletedProduct deletedElement={deletedProduct} />}
-            {modalContent === 'printingMode' && <SuccessComponent product={prod} onAddAnother={function (): void {
-              throw new Error('Function not implemented.');
-            } }></SuccessComponent>}
+            {modalContent === 'printingMode' && <SuccessComponent product={prod} onAddAnother={() => { throw new Error('Function not implemented.'); }} />}
           </div>
-
-
-
         </Modal>
-
-        <Table style={{ padding: "10px", paddingRight: "1000px", width: "1550px" }}>
-          <thead style={{ width: "1550px", position: "relative", right: "15px" }} >
-            <tr style={{ width: "1550px" }}>
-              <th style={{ fontSize: "1em", left: "110px", }}>Acciones</th>
-              <th>Código de Barras</th>
-              <th >Nombre</th>
-              <th>Categoría</th>
-              <th>Marca</th>
-              <th>Talle</th>
-              <th>Color</th>
-              <th>Material</th>
-              <th>Stock</th>
-              <th>Descripción</th>
-              <th>Fecha</th>
-              <th>Género</th>
-              <th>Precio</th>
-            </tr>
-          </thead>
-          <tbody >
+    <Stack gap="xs" style={{ listStyleType: "none", padding: "0", width:"70px", position:"fixed" }}>
+          <FilteringBar onAction={updateProducts} />
+        <ShoppingCart />
+        </Stack>
+       
+        <Table.ScrollContainer style={{paddingLeft:"100px", paddingRight:"100px"}} minWidth={500} type="native">
+        
+        <Table verticalSpacing="xs" horizontalSpacing="lg">
+    <Table.Thead>
+            <Table.Tr>
+              <Table.Th>Código de Barras</Table.Th>
+              <Table.Th>Nombre</Table.Th>
+              <Table.Th>Categoría</Table.Th>
+              <Table.Th>Marca</Table.Th>
+              <Table.Th>Talle</Table.Th>
+              <Table.Th>Color</Table.Th>
+              <Table.Th>Material</Table.Th>
+              <Table.Th>Stock</Table.Th>
+              <Table.Th>Descripción</Table.Th>
+              <Table.Th>Fecha</Table.Th>
+              <Table.Th>Género</Table.Th>
+              <Table.Th>Precio</Table.Th>
+            <Table.Th>Acciones</Table.Th>
+            </Table.Tr>
+  </Table.Thead>
+       
             {currentProducts.map((product) => (
-              <tr key={product._id} style={{ padding: "20px" }}>
-                <td >
-                  <Button
+              <Table.Tr key={product._id}>
+                <Table.Td>{product.barcode}</Table.Td>
+                <Table.Td>{product.name}</Table.Td>
+                <Table.Td>{product.category}</Table.Td>
+                <Table.Td>{product.brand}</Table.Td>
+                <Table.Td>{product.size}</Table.Td>
+                <Table.Td>{product.color}</Table.Td>
+                <Table.Td>{product.material}</Table.Td>
+                <Table.Td>{product.stock}</Table.Td>
+                <Table.Td>{product.description}</Table.Td>
+                <Table.Td>{formatDate(product.date)}</Table.Td>
+                <Table.Td>{product.gender}</Table.Td>
+                <Table.Td>${product.price}</Table.Td>
+                <Table.Td>
+                <Button
                     onClick={() => {
                       editProducts(product);
                       setModalContent("editMode");
                       setModalTitle("Editar producto")
                     }}
-                    style={{ width: "50px", padding: "0px", margin: "0px" }}
+                    variant='light'
+                   
                   >
                     {icon}
                   </Button>
                   <Button
-                  onClick={() => {
-                    editProducts(product);
-                    setModalContent("printingMode");
-                    setModalTitle("Imprimir Producto")
-                  }}
-                   style={{ width: "50px", padding: "0px", margin: "0px", backgroundColor:"green" }}>{printerIcon}</Button>
-                </td>
-                <td style={{ fontSize: '1.1em' }}>{product.barcode}</td>
-                <td style={{ fontSize: '1.1em' }}>{product.name}</td>
-                <td style={{ fontSize: '1.1em' }}>{product.category}</td>
-                <td style={{ fontSize: '1.1em' }}>{product.brand}</td>
-                <td style={{ fontSize: '1.1em' }}>{product.size}</td>
-                <td style={{ fontSize: '1.1em' }}>{product.color}</td>
-                <td style={{ fontSize: '1.1em' }}>{product.material}</td>
-                <td style={{ fontSize: '1.1em' }}>{product.stock}</td>
-                <td style={{ fontSize: '1.1em' }}>{product.description}</td>
-                <td style={{ fontSize: '1.1em' }}>{product.date}</td>
-                <td style={{ fontSize: '1.1em' }}>{product.gender}</td>
-                <td style={{ fontSize: '1.1em' }}>${product.price}</td>
-              </tr>
+                    onClick={() => {
+                      editProducts(product);
+                      setModalContent("printingMode");
+                      setModalTitle("Imprimir Producto")
+                    }}
+                    variant='light'
+                    color='orange'
+                   >{printerIcon}</Button>
+          </Table.Td>
+              </Table.Tr>
             ))}
-          </tbody>
+        
         </Table>
-
+        </Table.ScrollContainer>
       </div>
 
       {/* Pagination Controls */}
-      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px', marginBottom:"20px" }}>
         <Pagination
           total={totalPages}
           value={currentPage}
-          onChange={(page) => setCurrentPage(page)}
+          onChange={setCurrentPage}
         />
       </div>
     </div>
@@ -290,3 +312,28 @@ const CheckProdPage: React.FC = () => {
 };
 
 export default CheckProdPage;
+
+/*
+<Button
+                    onClick={() => {
+                      editProducts(product);
+                      setModalContent("editMode");
+                      setModalTitle("Editar producto")
+                    }}
+                    variant='light'
+                    style={{ width: "50px", padding: "0px", margin: "0px", position: "relative", left: "1750px" }}
+                  >
+                    {icon}
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      editProducts(product);
+                      setModalContent("printingMode");
+                      setModalTitle("Imprimir Producto")
+                    }}
+                    variant='light'
+                    color='orange'
+                    style={{ width: "50px", padding: "0px", margin: "0px", position: "relative", left: "1550px" }}>{printerIcon}</Button><ul style={{ listStyleType: "none", padding: "0" }}>
+          <li><FilteringBar onAction={updateProducts} /></li>
+          <li><ShoppingCart /></li>
+        </ul>*/

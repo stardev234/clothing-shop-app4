@@ -5,7 +5,7 @@ import { SetStateAction, useEffect, useState } from "react";
 import { useForm } from "@mantine/form";
 import { FilterProducts } from "../utils/fetchFiltredProds";
 import { newFilter } from "../utils/fetchFiltredProds";
-import { IconEdit, IconShoppingCart, IconPrinter, IconAdjustmentsHorizontal  } from '@tabler/icons-react';
+import { IconEdit, IconShoppingCart, IconPrinter } from '@tabler/icons-react';
 type MyFunction = (FiltredProds: Product) => void;
 
 interface MyComponentProps {
@@ -14,13 +14,12 @@ interface MyComponentProps {
 }
 
 
-export const FilteringBar: React.FC<MyComponentProps> = ({ onAction}) => {
-
+export const ShoppingCart: React.FC = () => {
+    const shoppingCartIcon = <IconShoppingCart size="22" ></IconShoppingCart>
     const [product, setProduct] = useState<Product | Array<string> | string | Object>(["defaultProducts"]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [date, setDate] = useState('');
-    const filterIcon = <IconAdjustmentsHorizontal size="22" ></IconAdjustmentsHorizontal>
 
     const [opened, { open, close }] = useDisclosure(false);
 
@@ -69,7 +68,7 @@ export const FilteringBar: React.FC<MyComponentProps> = ({ onAction}) => {
                 const productData = await FilterProducts(filter);
 
                 setProduct(productData)
-                onAction(productData)
+                
                 
 
             } catch (err) {
@@ -140,9 +139,10 @@ export const FilteringBar: React.FC<MyComponentProps> = ({ onAction}) => {
 
             </Drawer>
 
-            <Button variant="default" style={{height:""}} onClick={open}><IconAdjustmentsHorizontal></IconAdjustmentsHorizontal></Button>
+            <Button variant="default" style={{height:""}} onClick={open}> <IconShoppingCart></IconShoppingCart> </Button>
         </>
     )
 }
+
 
 
