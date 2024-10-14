@@ -8,14 +8,15 @@ import { getFilteredProds } from "../controllers/getFilteredProds";
 import { editProduct } from "../controllers/editProdController";
 import { deleteProduct } from "../controllers/deleteProdController";
 import { getOneProduct } from "../controllers/getOneProdController";
+import { validateEditData } from "../middleware/editProductValidation";
 const router: express.Router = express.Router();
 router.post("/getFilteredProds", getFilteredProds)
 router.get("/getProd", getAllProducts);
 router.post("/addProd", validateData, postProduct);
 router.get("/getBarcode", getBarcode);
-router.put("/editProd", editProduct),
+router.put("/editProd", validateEditData, editProduct),
 router.delete("/deleteProd", deleteProduct)
-router.get("/getOneProd", getOneProduct)
-// router.delete("/delete"); // uncomment this line if you want to add delete route
+router.post("/getOneProd", getOneProduct)
+
 
 export default router;

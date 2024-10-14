@@ -2,7 +2,9 @@ import { Product } from "@/models/Products";
 import { ProductResponse } from "@/models/CreateProd";
   export const createProduct = async (product: Product): Promise<ProductResponse> => {
 
+    console.log("PRODUCT",  product);
     
+
     try {
       const response = await fetch('http://localhost:3006/api/addProd', {
         method: 'POST',

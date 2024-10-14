@@ -19,7 +19,7 @@ import { ShoppingCart } from './shoppingCart';
 const CheckProdPage: React.FC = () => {
   // State for storing product data, loading state, and error
 
-  const [product, setProduct] = useState<Product[] | string | Object>([]);
+  const [product, setProduct] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [opened, { open, close }] = useDisclosure(false);
@@ -39,13 +39,17 @@ const CheckProdPage: React.FC = () => {
   const [modalOpen, setModalOpen] = useState<boolean>(false); // State for modal visibility
   const [modalTitle, setModalTitle] = useState<string>("Editar producto")
   const [modalContent, setModalContent] = useState("editMode")
-  const currentProducts = (product as Product[]).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(
-    (currentPage - 1) * productsPerPage,
-    currentPage * productsPerPage
-  );
+ 
+  const [shoppingProd, setShoppingProd] = useState<Product | null>(null);
+
+
 
   const updateProducts = (newData: Product[] | string | Object) => {
+    console.log("newData FILTERED", newData);
+    
     setProduct(newData as Product[]);
+    console.log("From update products",product);
+    
     setCurrentPage(1)
   };
 
@@ -89,19 +93,30 @@ const CheckProdPage: React.FC = () => {
   interface DateFormatProps {
     isoDate: string;
   }
-  
+
   const formatDate = (isoDate: string): string => {
     const date = new Date(isoDate);
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
     const year = date.getFullYear();
-  
+
     return `${day}/${month}/${year}`;
   };
-  
+
   const DateFormat: React.FC<DateFormatProps> = ({ isoDate }) => {
     return <span>{formatDate(isoDate)}</span>;
   };
+
+
+
+  const handleShoppingCart = (product: Product) => {
+    setShoppingProd(product)
+    console.log("FROM HANDLE SHOPPING CART");
+    console.log(shoppingProd);
+    
+    
+    
+  }
 
 
   // Fetches product data
@@ -110,6 +125,8 @@ const CheckProdPage: React.FC = () => {
       try {
         const productData = await getProducts();
         setProduct(productData);
+        console.log(product);
+        
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Unknown error');
       } finally {
@@ -131,6 +148,7 @@ const CheckProdPage: React.FC = () => {
           setProduct(productData);
           setUpdateTrigger(false)
           setModalContent("updatedProduct")
+          setModalTitle("Producto editado correctamente")
           console.log("from useEffect update trigger");
 
         } catch (err) {
@@ -214,11 +232,11 @@ const CheckProdPage: React.FC = () => {
 
 
 
-  
+
 
   return (
     <div>
-      <BarcodeScanner />
+      <BarcodeScanner onAction={handleShoppingCart} />
 
       <div>
         <Modal opened={opened} onClose={close} title={modalTitle} size="md">
@@ -230,33 +248,33 @@ const CheckProdPage: React.FC = () => {
             {modalContent === 'printingMode' && <SuccessComponent product={prod} onAddAnother={() => { throw new Error('Function not implemented.'); }} />}
           </div>
         </Modal>
-    <Stack gap="xs" style={{ listStyleType: "none", padding: "0", width:"70px", position:"fixed" }}>
+        <Stack gap="xs" style={{ listStyleType: "none", padding: "0", width: "70px", position: "fixed" }}>
           <FilteringBar onAction={updateProducts} />
-        <ShoppingCart />
+          <ShoppingCart productElement={shoppingProd}/>
         </Stack>
-       
-        <Table.ScrollContainer style={{paddingLeft:"100px", paddingRight:"100px"}} minWidth={500} type="native">
-        
-        <Table verticalSpacing="xs" horizontalSpacing="lg">
-    <Table.Thead>
-            <Table.Tr>
-              <Table.Th>Código de Barras</Table.Th>
-              <Table.Th>Nombre</Table.Th>
-              <Table.Th>Categoría</Table.Th>
-              <Table.Th>Marca</Table.Th>
-              <Table.Th>Talle</Table.Th>
-              <Table.Th>Color</Table.Th>
-              <Table.Th>Material</Table.Th>
-              <Table.Th>Stock</Table.Th>
-              <Table.Th>Descripción</Table.Th>
-              <Table.Th>Fecha</Table.Th>
-              <Table.Th>Género</Table.Th>
-              <Table.Th>Precio</Table.Th>
-            <Table.Th>Acciones</Table.Th>
-            </Table.Tr>
-  </Table.Thead>
-       
-            {currentProducts.map((product) => (
+
+        <Table.ScrollContainer style={{ paddingLeft: "100px", paddingRight: "100px" }} minWidth={500} type="native">
+
+          <Table verticalSpacing="xs" horizontalSpacing="lg">
+            <Table.Thead>
+              <Table.Tr>
+                <Table.Th>Código de Barras</Table.Th>
+                <Table.Th>Nombre</Table.Th>
+                <Table.Th>Categoría</Table.Th>
+                <Table.Th>Marca</Table.Th>
+                <Table.Th>Talle</Table.Th>
+                <Table.Th>Color</Table.Th>
+                <Table.Th>Material</Table.Th>
+                <Table.Th>Stock</Table.Th>
+                <Table.Th>Descripción</Table.Th>
+                <Table.Th>Fecha</Table.Th>
+                <Table.Th>Género</Table.Th>
+                <Table.Th>Precio</Table.Th>
+                <Table.Th>Acciones</Table.Th>
+              </Table.Tr>
+            </Table.Thead>
+
+            {product.map((product) => (
               <Table.Tr key={product._id}>
                 <Table.Td>{product.barcode}</Table.Td>
                 <Table.Td>{product.name}</Table.Td>
@@ -271,14 +289,14 @@ const CheckProdPage: React.FC = () => {
                 <Table.Td>{product.gender}</Table.Td>
                 <Table.Td>${product.price}</Table.Td>
                 <Table.Td>
-                <Button
+                  <Button
                     onClick={() => {
                       editProducts(product);
                       setModalContent("editMode");
                       setModalTitle("Editar producto")
                     }}
                     variant='light'
-                   
+
                   >
                     {icon}
                   </Button>
@@ -290,17 +308,17 @@ const CheckProdPage: React.FC = () => {
                     }}
                     variant='light'
                     color='orange'
-                   >{printerIcon}</Button>
-          </Table.Td>
+                  >{printerIcon}</Button>
+                </Table.Td>
               </Table.Tr>
             ))}
-        
-        </Table>
+
+          </Table>
         </Table.ScrollContainer>
       </div>
 
       {/* Pagination Controls */}
-      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px', marginBottom:"20px" }}>
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px', marginBottom: "20px" }}>
         <Pagination
           total={totalPages}
           value={currentPage}

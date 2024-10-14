@@ -6,6 +6,7 @@ import { useForm } from "@mantine/form";
 import { FilterProducts } from "../utils/fetchFiltredProds";
 import { newFilter } from "../utils/fetchFiltredProds";
 import { IconEdit, IconShoppingCart, IconPrinter, IconAdjustmentsHorizontal  } from '@tabler/icons-react';
+import { getProducts } from "../utils/fetchProds";
 type MyFunction = (FiltredProds: Product) => void;
 
 interface MyComponentProps {
@@ -24,7 +25,7 @@ export const FilteringBar: React.FC<MyComponentProps> = ({ onAction}) => {
 
     const [opened, { open, close }] = useDisclosure(false);
 
-    const form = useForm({
+    let form = useForm({
         initialValues: {
             name: "",
             category: "",
@@ -66,8 +67,9 @@ export const FilteringBar: React.FC<MyComponentProps> = ({ onAction}) => {
                 }
 
                 console.log(values);
-                const productData = await FilterProducts(filter);
-
+                const productData = await FilterProducts(filter);   
+                console.log("Filtered Products",productData);
+                
                 setProduct(productData)
                 onAction(productData)
                 
@@ -84,6 +86,13 @@ export const FilteringBar: React.FC<MyComponentProps> = ({ onAction}) => {
 
         if (loading) return <p>Loading...</p>;
         if (error) return <p>Error: {error}</p>
+    };
+
+    
+    const handleCleanCart = async () => {
+        // Reset product state
+        form.reset(); // Reset the form values to their initial state
+        close()
     };
 
     return (
@@ -134,13 +143,13 @@ export const FilteringBar: React.FC<MyComponentProps> = ({ onAction}) => {
                         />
                     </Card>
 
-                    <Button onClick={close} type="submit" >Submit</Button>
-
+                    <Button onClick={close} variant="outline" type="submit" style={{marginTop:"10px"}}>Submit</Button>
+                    <Button onClick={handleCleanCart} variant="outline" type="submit" style={{marginLeft:"10px", marginTop:"10px"}}>Borrar filtros</Button>
                 </form>
 
             </Drawer>
 
-            <Button variant="default" style={{height:""}} onClick={open}><IconAdjustmentsHorizontal></IconAdjustmentsHorizontal></Button>
+            <Button variant="default" style={{width:"70px", height:"50px"}} onClick={open}><IconAdjustmentsHorizontal></IconAdjustmentsHorizontal></Button>
         </>
     )
 }

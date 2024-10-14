@@ -26,6 +26,7 @@ export default App;
 import React, { useState } from 'react';
 import BWIPJS from 'bwip-js';
 import './print.css';
+import JsBarcode from 'jsbarcode';
 
 type BarcodePrinterProps = {
     barcode: string;

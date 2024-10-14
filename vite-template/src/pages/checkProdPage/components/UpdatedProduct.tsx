@@ -24,10 +24,23 @@ export interface productElement {
 
 export const UpdatedProduct: React.FC<any> = ({ updatedElement }) => {
 
+  const formatDate = (isoDate: string): string => {
+    const date = new Date(isoDate);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
+  };
+
+
+
+
+  
   return (
 
     <div>
-      <List>
+      <List style={{ listStyleType: 'none', padding: 0 }}>
         <ListItem>
           <Text>
             <span style={{ fontWeight: 'bold' }}>
@@ -116,7 +129,7 @@ export const UpdatedProduct: React.FC<any> = ({ updatedElement }) => {
             <span style={{ fontWeight: 'bold' }}>
               Fecha: {" "}
             </span>
-            {updatedElement.date}
+            {formatDate(updatedElement.date)}
           </Text>
         </ListItem>
 

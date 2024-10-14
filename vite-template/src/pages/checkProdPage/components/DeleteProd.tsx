@@ -211,7 +211,7 @@ console.log("FROM DELETE HANDLESUBMIT PRODUCT productElement", productElement);
             </ListItem>
     
           </List>
-          <Button onClick={()=>handleSubmit()} style={{backgroundColor:"red", justifyContent:"center", marginTop:"15px"}}>Eliminar</Button>
+          <Button onClick={()=>handleSubmit()}  style={{backgroundColor:"red", justifyContent:"center", marginTop:"15px"}}>Eliminar</Button>
         </div>
   )
 }

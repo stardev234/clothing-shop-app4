@@ -5,8 +5,8 @@ export function ColorSchemeToggle() {
 
   return (
     <Group justify="center" mt="xl">
-      <Button onClick={() => setColorScheme('light')}>Modo claro</Button>
-      <Button onClick={() => setColorScheme('dark')}>Modo oscuro</Button>
+      <Button variant='light' onClick={() => setColorScheme('light')}>Modo claro</Button>
+      <Button variant="light" onClick={() => setColorScheme('dark')}>Modo oscuro</Button>
 
     </Group>
   );

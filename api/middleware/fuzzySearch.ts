@@ -34,7 +34,7 @@ interface FilterOptions {
 
 async function fuzzySearch(name: string): Promise<SearchResult[]> {
 
-  const documents = await Product.find().exec();
+  const documents = await Product.find().sort({ createdAt: -1 }).exec();
 
 
     

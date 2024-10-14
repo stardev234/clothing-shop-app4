@@ -49,10 +49,31 @@ export const EditProd: React.FC<any> = ({ productElement, onUpdate, onDelete }) 
 
     },
     validate: {
-
-    },
-  });
-
+      // provider: (value) => (value.length === 0 ? "Provider is required" : null),
+       name: (value) => (value.length === 0 ? "Nombre es obligatorio" : null),
+       category: (value) => (value.length === 0 ? "Categoria es obligatorio" : null),
+       //brand: (value) => (value.length === 0 ? "Brand is required" : null),
+      // size: (value) => (value.length === 0 ? "Size is required" : null),
+       //color: (value) => (value.length === 0 ? "Color is required" : null),
+       //material: (value) => (value.length === 0 ? "Material is required" : null),
+       price: (value) => {
+         const numValue = parseFloat(value);
+         if (isNaN(numValue) || numValue <= 0) {
+           return "Precio debe ser un valor positivo";
+         }
+         return null;
+       },
+       stock: (value) => {
+         const numValue = parseInt(value, 10);
+         if (isNaN(numValue) || numValue < 0) {
+           return "Stock no debe ser negativo";
+         }
+         return null;
+       },
+      // gender: (value) => (value.length === 0 ? "Gender is required" : null),
+  
+     },
+   });
   const deletedProduct: Product = {
     barcode: productElement.barcode,
     name: productElement.name,
@@ -61,8 +82,8 @@ export const EditProd: React.FC<any> = ({ productElement, onUpdate, onDelete }) 
     size: productElement.size,
     color: productElement.color,
     material: productElement.material,
-    price: productElement.price,
-    stock: productElement.stock,
+    price: parseFloat(productElement.price),
+    stock: parseInt(productElement.stock),
     description: productElement.description,
     gender: productElement.gender,
     _id: productElement._id
@@ -88,8 +109,8 @@ export const EditProd: React.FC<any> = ({ productElement, onUpdate, onDelete }) 
           size: values.size,
           color: values.color,
           material: values.material,
-          price: values.price,
-          stock: values.stock,
+          price: parseFloat(values.price),
+          stock: parseInt(values.stock),
           description: values.description,
           gender: values.gender,
           _id: values._id
@@ -190,7 +211,8 @@ export const EditProd: React.FC<any> = ({ productElement, onUpdate, onDelete }) 
           />
 
           <TextInput
-            label="Precio"
+          type="number"
+            label="Precio (Solo numeros)"
             placeholder="Precio"
             {...form.getInputProps('price')}
           />
@@ -223,9 +245,9 @@ export const EditProd: React.FC<any> = ({ productElement, onUpdate, onDelete }) 
 
 
 
-        <Button onClick={close} type="submit" style={{ marginTop: "10px" }}>Enviar</Button>
+        <Button onClick={close} variant="outline" type="submit" style={{ marginTop: "10px" }}>Enviar</Button>
 
-        <Button onClick={onDelete} style={{ marginTop: "10px", marginLeft:"155px", backgroundColor:"red" }}>Eliminar Producto</Button>
+        <Button onClick={onDelete} variant="outline" color="red" style={{ marginTop: "10px", marginLeft:"155px",}}>Eliminar Producto</Button>
 
 
       </form>

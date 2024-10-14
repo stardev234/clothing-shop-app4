@@ -1,61 +1,59 @@
-
 {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "type": "object",
-    "properties": {
-      "barcode": {
-        "type": "string",
-        "minLength": 0
-      },
-      "provider": {
-        "type": "string",
-        "minLength": 1
-      },
-      "name": {
-        "type": "string",
-        "minLength": 1
-      },
-      "category": {
-        "type": "string",
-        "minLength": 1
-      },
-      "brand": {
-        "type": "string",
-        "minLength": 1
-      },
-      "size": {
-        "type": "string",
-        "minLength": 1
-      },
-      "color": {
-        "type": "string",
-        "minLength": 1
-      },
-      "material": {
-        "type": "string",
-        "minLength": 1
-      },
-      "price": {
-        "type": "string",
-        "pattern": "^[0-9]+(\\.[0-9]{1,2})?$"
-      },
-      "stock": {
-        "type": "string",
-        "pattern": "^[0-9]+$"
-      },
-      "description": {
-        "type": "string"
-      },
-      "date": {
-        "type": "string"
-
-      },
-      "gender": {
-        "type": "string",
-        "enum": ["Hombre", "Mujer", "Unisex"]
-      }
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "barcode": {
+      "type": "string",
+      "minLength": 0
     },
-    "required": ["barcode","name", "category", "price", "stock"],
-    "additionalProperties": false
-  }
-  
+    "provider": {
+      "type": "string",
+      "minLength": 1
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "category": {
+      "type": "string",
+      "minLength": 1
+    },
+    "brand": {
+      "type": "string",
+      "minLength": 1
+    },
+    "size": {
+      "type": "string",
+      "minLength": 1
+    },
+    "color": {
+      "type": "string",
+      "minLength": 1
+    },
+    "material": {
+      "type": "string",
+      "minLength": 1
+    },
+    "price": {
+      "type": "number",
+      "minimum": 0  
+    },
+    "stock": {
+      "type": "integer",  
+      "minimum": 0
+    },
+    "description": {
+      "type": "string"
+    },
+    "date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "gender": {
+      "type": "string",
+      "enum": ["Hombre", "Mujer", "Unisex"]
+    }
+  },
+  "required": ["barcode", "name", "category", "price", "stock"],
+  "additionalProperties": false
+}

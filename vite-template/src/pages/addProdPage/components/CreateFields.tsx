@@ -1,112 +1,3 @@
-/*import React from 'react';
-import { TextInput, Button, Group, Grid, } from '@mantine/core';
-import { useForm } from '@mantine/form';
-import { createProduct } from '../utils/postProduct';
-import { Product } from '@/models/Products';
-import { getBarcode } from '../utils/getBarcode';
-
-
-
-const fields = [
-  { name: 'provider', label: 'Proveedor', placeholder: 'Proveedor' },
-  { name: 'name', label: 'Nombre', placeholder: 'Nombre' },
-  { name: 'category', label: 'Categoría', placeholder: 'Categoría' },
-  { name: 'brand', label: 'Marca', placeholder: 'Marca' },
-  { name: 'size', label: 'Talle', placeholder: 'Talle' },
-  { name: 'color', label: 'Color', placeholder: 'Color' },
-  { name: 'material', label: 'Material', placeholder: 'Material' },
-  { name: 'price', label: 'Precio', placeholder: 'Precio', type: 'number' },
-  { name: 'stock', label: 'Stock (solo numeros)', placeholder: 'Stock (solo numeros)', type: 'number' },
-  { name: 'description', label: 'Descripción', placeholder: 'Descripción' },
-  { name: 'date', label: 'Fecha', placeholder: 'Fecha', type: 'date' },
-  { name: 'gender', label: 'Genero', placeholder: 'Genero' },
-];
-
-
-const validate = (values: any) => {
-  const errors: Record<string, string> = {};
-  const fieldsWithErrors = fields.map(field => field.name);
-
-  fieldsWithErrors.forEach(field => {
-    if (!values[field]) {
-      errors[field] = `${fields.find(f => f.name === field)?.label} is required`;
-    }
-  });
-
-
-  if (isNaN(values.price) || values.price <= 0) errors.price = 'Precio must be a positive number';
-  if (isNaN(values.stock) || values.stock < 0) errors.stock = 'Stock cannot be negative';
-
-  return errors;
-};
-
-const FormComponent: React.FC = () => {
-  const form = useForm({
-    initialValues: fields.reduce((acc, field) => ({ ...acc, [field.name]: '' }), {}),
-    validate,
-  });
-
-
-
-  const handleSubmit = async (values: any) => {
-    const barcode = await getBarcode()
-    // Map form values to Product type
-    const product: Product = {
-      barcode: barcode,
-      name: values.name,
-      category: values.category,
-      brand: values.brand,
-      size: values.size,
-      color: values.color,
-      material: values.material,
-      price: values.price,
-      stock: values.stock,
-      description: values.description,
-      date: new Date(values.date),
-      gender: values.gender,
-    };
-
-    try {
-      const response = await createProduct(product);
-      console.log('Product created successfully:', response);
-
-
-    } catch (error) {
-      console.error('Error creating product:', error);
-      
-    }
-  };
-  
-  return (
-    
-    <form onSubmit={form.onSubmit(handleSubmit)}>
-      <Group>
-      <Grid   style={{ paddingLeft: '20%', paddingRight:"20%"}} >
-        {fields.map((field) => (
-          <Group style={{padding:"20px"}}>
-          <div key={field.name}>
-            <TextInput style={{width:"300px"}}
-              label={field.label}
-              placeholder={field.placeholder}
-              type={field.type || 'text'}
-              {...form.getInputProps(field.name)}
-            />
-          
-          </div>
-          </Group>
-        ))}
-        <Button type="submit" top={"43px"}>Submit</Button>
-      </Grid>
-      
-          
-   </Group> 
-   </form>
-  );
-};
-
-export default FormComponent;
-*/
-
 
 import { Box, Button, Card, Drawer, Grid, Group, InputLabel, Menu, Select, Textarea, TextInput, Checkbox, Input, Modal, List, ListItem, Text } from "@mantine/core";
 import { useDisclosure } from '@mantine/hooks';
@@ -149,7 +40,6 @@ export const CreateFields: React.FC<any> = () => {
 
   const form = useForm({
     initialValues: {
-
       provider: "",
       name: "",
       category: "",
@@ -161,15 +51,34 @@ export const CreateFields: React.FC<any> = () => {
       description: "",
       stock: "",
       gender: "",
-      date: new Date
-
-
+      date: "",
     },
     validate: {
-
+     // provider: (value) => (value.length === 0 ? "Provider is required" : null),
+      name: (value) => (value.length === 0 ? "Nombre es obligatorio" : null),
+      category: (value) => (value.length === 0 ? "Categoria es obligatorio" : null),
+      //brand: (value) => (value.length === 0 ? "Brand is required" : null),
+     // size: (value) => (value.length === 0 ? "Size is required" : null),
+      //color: (value) => (value.length === 0 ? "Color is required" : null),
+      //material: (value) => (value.length === 0 ? "Material is required" : null),
+      price: (value) => {
+        const numValue = parseFloat(value);
+        if (isNaN(numValue) || numValue <= 0) {
+          return "Precio debe ser un valor positivo";
+        }
+        return null;
+      },
+      stock: (value) => {
+        const numValue = parseInt(value, 10);
+        if (isNaN(numValue) || numValue < 0) {
+          return "Stock no debe ser negativo";
+        }
+        return null;
+      },
+     // gender: (value) => (value.length === 0 ? "Gender is required" : null),
+      date: (value) => (value.length === 0 ? "Fecha es obligatorio" : null),
     },
   });
-
   /*
     useEffect(() => {
       setProduct(updateData)
@@ -187,7 +96,7 @@ export const CreateFields: React.FC<any> = () => {
         const barcode = await getBarcode()
 
 
-        const updatedProduct: Product = {
+        const createdProduct: Product = {
           barcode: barcode,
           provider: values.provider,
           name: values.name,
@@ -196,26 +105,25 @@ export const CreateFields: React.FC<any> = () => {
           size: values.size,
           color: values.color,
           material: values.material,
-          price: values.price,
-          stock: values.stock,
+          price: parseFloat(values.price),
+          stock: parseInt(values.stock),
           description: values.description,
           gender: values.gender,
-          date: values.date
+          date: new Date (Date.parse(values.date))
+        };
 
-        }
+        console.log("from handleSubmit", createdProduct);
 
-        console.log("from handleSubmit", updatedProduct);
-
-        setProduct(await createProduct(updatedProduct))
+        setProduct(await createProduct(createdProduct))
 
         setSuccess(true)
         open()
         console.log("UPDATE DATA", product);
 
-      
+
         /*form.reset()*/
 
-        
+
 
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Unknown error');
@@ -234,14 +142,14 @@ export const CreateFields: React.FC<any> = () => {
   return (
 
     <div >
-{/*<QZPrintComponent ></QZPrintComponent>*/}
+      {/*<QZPrintComponent ></QZPrintComponent>*/}
 
       <div >
         {showSuccess && (<Modal opened={opened} onClose={close} title="Producto añadido correctamente">
           <SuccessComponent product={product} onAddAnother={function (): void {
-          throw new Error("Function not implemented.");
-        } }></SuccessComponent></Modal>)
-        
+            throw new Error("Function not implemented.");
+          }}></SuccessComponent></Modal>)
+
         }
       </div>
 
@@ -262,12 +170,12 @@ export const CreateFields: React.FC<any> = () => {
 
 
           <Group >
-            < TextInput 
-              style={{width:"185px"}}
+            < TextInput
+              style={{ width: "185px" }}
               label="Fecha"
               value={date}
               type="date"  // HTML date input type
-             
+
               {...form.getInputProps('date')}
             />
 
@@ -316,7 +224,7 @@ export const CreateFields: React.FC<any> = () => {
               placeholder="Color"
               {...form.getInputProps('color')}
             />
-          <TextInput
+            <TextInput
               label="Material"
               placeholder="Material"
               {...form.getInputProps('material')}
@@ -325,24 +233,26 @@ export const CreateFields: React.FC<any> = () => {
           </Group>
 
           <Group>
-            
+
             <TextInput
-              label="Precio"
+
+              type="number"
+              label="Precio (solo numeros)"
               placeholder="Precio"
               {...form.getInputProps('price')}
             />
-          
 
 
-          <Group>
-            <TextInput
-              type="number"
-              label="Stock (solo numeros)"
-              placeholder="Stock"
-              {...form.getInputProps('stock')}
-            />
 
-</Group>
+            <Group>
+              <TextInput
+                type="number"
+                label="Stock (solo numeros)"
+                placeholder="Stock"
+                {...form.getInputProps('stock')}
+              />
+
+            </Group>
 
             <TextInput
               label="Descripcion"

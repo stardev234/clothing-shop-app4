@@ -1,148 +1,161 @@
-import { Box, Button, Card, Drawer, InputLabel, Menu, Select, Textarea, TextInput } from "@mantine/core";
+import { AccordionControl, Box, Button, Drawer, List, ListItem, Text } from "@mantine/core";
 import { useDisclosure } from '@mantine/hooks';
 import { Product } from "@/models/Products";
-import { SetStateAction, useEffect, useState } from "react";
-import { useForm } from "@mantine/form";
-import { FilterProducts } from "../utils/fetchFiltredProds";
-import { newFilter } from "../utils/fetchFiltredProds";
-import { IconEdit, IconShoppingCart, IconPrinter } from '@tabler/icons-react';
-type MyFunction = (FiltredProds: Product) => void;
+import { useEffect, useState } from "react";
+import { IconShoppingCart } from '@tabler/icons-react';
+import { Accordion } from '@mantine/core';
 
 interface MyComponentProps {
-    onAction: MyFunction;
-
+    productElement: Product;
 }
 
+interface CartItem {
+    product: Product;
+    quantity: number;
+}
 
-export const ShoppingCart: React.FC = () => {
-    const shoppingCartIcon = <IconShoppingCart size="22" ></IconShoppingCart>
-    const [product, setProduct] = useState<Product | Array<string> | string | Object>(["defaultProducts"]);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
-    const [date, setDate] = useState('');
-
+export const ShoppingCart: React.FC<MyComponentProps> = ({ productElement }) => {
+    const shoppingCartIcon = <IconShoppingCart size="22" />;
     const [opened, { open, close }] = useDisclosure(false);
+    const [items, setItems] = useState<CartItem[]>([]);
+    const formatDate = (isoDate: string): string => {
+        const date = new Date(isoDate);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
 
-    const form = useForm({
-        initialValues: {
-            name: "",
-            category: "",
-            brand: "",
-            size: "",
-            color: "",
-            material: "",
-            price: "",
-            stock: "",
-            gender: "",
-            fromDate: new Date(""),
-            untilDate: new Date(""),
-        },
-        validate: {
+        return `${day}/${month}/${year}`;
+    };
+    useEffect(() => {
+        if (productElement) {
+            setItems((prevItems) => {
+                const existingItem = prevItems.find(item => item.product._id === productElement._id);
 
-        },
-    });
-
-
-    const handleSubmit = async (values: typeof form.values) => {
-        console.log("from handleSubmit");
-
-        const fetchData = async () => {
-            try {
-
-                const filter: newFilter = {
-
-                    name: values.name,
-                    category: values.category,
-                    brand: values.brand,
-                    size: values.size,
-                    color: values.color,
-                    material: values.material,
-                    price: values.price,
-                    stock: values.stock,
-                    gender: values.gender,
-                    fromDate: values.fromDate,
-                    untilDate: values.untilDate,
+                if (existingItem) {
+                    return prevItems.map(item =>
+                        item.product._id === productElement._id
+                            ? { ...item, quantity: item.quantity + 1 }
+                            : item
+                    );
+                } else {
+                    return [...prevItems, { product: productElement, quantity: 1 }];
                 }
+            });
+        }
+    }, [productElement]);
 
-                console.log(values);
-                const productData = await FilterProducts(filter);
+    const calculateTotal = () => {
+        return items.reduce((total, item) => total + item.product.price * item.quantity, 0).toFixed(2);
+    };
 
-                setProduct(productData)
-                
-                
-
-            } catch (err) {
-                setError(err instanceof Error ? err.message : 'Unknown error');
-            } finally {
-                setLoading(false);
-            }
-
-        };
-
-        fetchData();
-
-        if (loading) return <p>Loading...</p>;
-        if (error) return <p>Error: {error}</p>
+    const clearCart = () => {
+        setItems([]);
     };
 
     return (
-        <>
-            <Drawer opened={opened} onClose={close} title="Busqueda y filtrado de Productos">
-             
+        <div>
+            <Drawer opened={opened} onClose={close} title="Productos">
+                {items.length > 0 ? (
+                    <Accordion>
+                        {items.map((item) => (
+                            <Accordion.Item key={item.product._id} value={item.product.name}>
+                                <AccordionControl>
+                                    {item.product.name} - Cantidad: {item.quantity} Precio: ${item.product.price}
+                                </AccordionControl>
+                                <Accordion.Panel>
+                                    <div>
+                                        <List>
 
-                <form
-                    onSubmit={form.onSubmit(handleSubmit)}
-                >
-                    <TextInput
-                        label="Nombre"
-                        placeholder="Nombre de la prenda"
-                        {...form.getInputProps('name')}
-                    />
+                                            <ListItem>
+                                                <Text>
+                                                    <span style={{ fontWeight: 'bold' }}>Codigo de barras: </span>
+                                                    {item.product.barcode}
+                                                </Text>
+                                            </ListItem>
+                                            <ListItem>
+                                                <Text>
+                                                    <span style={{ fontWeight: 'bold' }}>Nombre: </span>
+                                                    {item.product.name}
+                                                </Text>
+                                            </ListItem>
+                                            <ListItem>
+                                                <Text>
+                                                    <span style={{ fontWeight: 'bold' }}>Categoria: </span>
+                                                    {item.product.category}
+                                                </Text>
+                                            </ListItem>
+                                            <ListItem>
+                                                <Text>
+                                                    <span style={{ fontWeight: 'bold' }}>Marca: </span>
+                                                    {item.product.brand}
+                                                </Text>
+                                            </ListItem>
+                                            <ListItem>
+                                                <Text>
+                                                    <span style={{ fontWeight: 'bold' }}>Talle: </span>
+                                                    {item.product.size}
+                                                </Text>
+                                            </ListItem>
+                                            <ListItem>
+                                                <Text>
+                                                    <span style={{ fontWeight: 'bold' }}>Color: </span>
+                                                    {item.product.color}
+                                                </Text>
+                                            </ListItem>
+                                            <ListItem>
+                                                <Text>
+                                                    <span style={{ fontWeight: 'bold' }}>Material: </span>
+                                                    {item.product.material}
+                                                </Text>
+                                            </ListItem>
+                                            <ListItem>
+                                                <Text>
+                                                    <span style={{ fontWeight: 'bold' }}>Stock: </span>
+                                                    {item.product.stock}
+                                                </Text>
+                                            </ListItem>
+                                            <ListItem>
+                                                <Text>
+                                                    <span style={{ fontWeight: 'bold' }}>Descripción: </span>
+                                                    {item.product.description}
+                                                </Text>
+                                            </ListItem>
+                                            <ListItem>
+                                                <Text>
+                                                    <span style={{ fontWeight: 'bold' }}>Fecha: </span>
+                                                    {formatDate(item.product.date)}
+                                                </Text>
+                                            </ListItem>
+                                            <ListItem>
+                                                <Text>
+                                                    <span style={{ fontWeight: 'bold' }}>Género: </span>
+                                                    {item.product.gender}
+                                                </Text>
+                                            </ListItem>
+                                            <ListItem>
+                                                <Text>
+                                                    <span style={{ fontWeight: 'bold' }}>Precio: </span>
+                                                    ${item.product.price}
+                                                </Text>
+                                            </ListItem>
+                                        </List>
+                                    </div>
+                                </Accordion.Panel>
+                            </Accordion.Item>
+                        ))}
+                    </Accordion>
+                ) : (
+                    <Text>No hay articulos en el carro</Text>
+                )}
 
-                    <Select
-                        label="Categoria"
-                        placeholder="Elija una categoria"
-                        data={["Camisa", "Remera", "Pantalon", "Short", "Falda", "Vestido", "Accesorio", "Conjunto", "Campera", "Ropa interior", "Calzado"]}
-                        {...form.getInputProps('category')}
-                    />
-
-                    <Select
-                        label="Genero"
-                        placeholder="Elija un Genero"
-                        data={["Hombre", "Mujer", "Unisex"]}
-                        {...form.getInputProps('gender')}
-                    />
-
-                    <Card style={{ marginTop: 20 }} >
-                        <div>Filtrar por periodo</div>
-                        <TextInput
-                            label="Desde"
-                            value={date}
-                            type="date"  // HTML date input type
-                            style={{ marginBottom: 20 }} // Optional styling
-                            {...form.getInputProps('fromDate')}
-                        />
-
-                        <TextInput
-                            label="Hasta"
-                            value={date}
-                            type="date"  // HTML date input type
-                            style={{ marginBottom: 20 }} // Optional styling
-                            
-                            {...form.getInputProps('untilDate')}
-                        />
-                    </Card>
-
-                    <Button onClick={close} type="submit" >Submit</Button>
-
-                </form>
-
+                <Text style={{ marginTop: "10px" }}>Total a pagar: ${calculateTotal()}</Text>
+                <Button style={{ marginTop: "10px" }} variant="outline" onClick={clearCart}>
+                    Vaciar carrito
+                </Button>
+                <Button style={{ marginTop: "10px", marginLeft:"10px"}} variant="outline">Continuar con la compra</Button>
             </Drawer>
 
-            <Button variant="default" style={{height:""}} onClick={open}> <IconShoppingCart></IconShoppingCart> </Button>
-        </>
-    )
-}
-
-
-
+            <Button  variant="default" onClick={open} style={{width:"70px", height:"50px"}}>{shoppingCartIcon}</Button>
+        </div>
+    );
+};
