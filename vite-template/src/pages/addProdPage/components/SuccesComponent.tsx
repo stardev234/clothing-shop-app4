@@ -22,6 +22,16 @@ interface SuccessComponentProps {
 }
 
 const SuccessComponent: React.FC<SuccessComponentProps> = ({ product}) => {
+    const formatDate = (isoDate: string): string => {
+        const date = new Date(isoDate);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+        const year = date.getFullYear();
+    
+        return `${day}/${month}/${year}`;
+      };
+
+
     return (
         <div>
             <List>
@@ -82,7 +92,7 @@ const SuccessComponent: React.FC<SuccessComponentProps> = ({ product}) => {
                 <ListItem>
                     <Text>
                         <span style={{ fontWeight: 'bold' }}>Fecha: </span>
-                        {product.date}
+                        {formatDate(product.date)}
                     </Text>
                 </ListItem>
                 <ListItem>

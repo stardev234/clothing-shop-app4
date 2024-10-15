@@ -19,6 +19,15 @@ export interface productElement {
 type id = { id: String }
 export const DeleteProduct: React.FC<any> = ({productElement, onUpdate, onDelete}) => {
 
+
+  const formatDate = (isoDate: string): string => {
+    const date = new Date(isoDate);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
+  };
   
 console.log("ON DELETE",onDelete);
 
@@ -187,7 +196,7 @@ console.log("FROM DELETE HANDLESUBMIT PRODUCT productElement", productElement);
                 <span style={{ fontWeight: 'bold' }}>
                   Fecha: {" "}
                 </span>
-                {productElement.date}
+                {formatDate(productElement.date)}
               </Text>
             </ListItem>
     

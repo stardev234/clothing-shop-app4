@@ -25,6 +25,16 @@ export interface productElement {
 type id = { id: String }
 export const CreateFields: React.FC<any> = () => {
 
+  const formatDate = (isoDate: string): string => {
+    const date = new Date(isoDate);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
+  };
+
+
 
   const [product, setProduct] = useState<Product | Array<string> | string | Object>(["defaultProducts"]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -155,7 +165,7 @@ export const CreateFields: React.FC<any> = () => {
 
 
 
-      <Grid justify="center" style={{ margin: "1px", padding: "100px", width: "1800px" }} >
+      <Grid justify="center" style={{ margin: "1px", padding: "100px", width: "1900px" }} >
         <form
           onSubmit={form.onSubmit(handleSubmit)}
         >

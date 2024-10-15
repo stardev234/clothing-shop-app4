@@ -143,7 +143,7 @@ export const FilteringBar: React.FC<MyComponentProps> = ({ onAction}) => {
                         />
                     </Card>
 
-                    <Button onClick={close} variant="outline" type="submit" style={{marginTop:"10px"}}>Submit</Button>
+                    <Button onClick={close} variant="outline" type="submit" style={{marginTop:"10px"}}>Filtrar</Button>
                     <Button onClick={handleCleanCart} variant="outline" type="submit" style={{marginLeft:"10px", marginTop:"10px"}}>Borrar filtros</Button>
                 </form>
 
